@@ -1,5 +1,5 @@
 // any import breaks
-import { getSchema } from '@tiptap/core'
+// import { getSchema } from '@tiptap/core'
 
 describe('example test', () => {
   it('should work', () => {
