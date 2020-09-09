@@ -31,23 +31,17 @@ module.exports = {
       },
     },
     {
-      files: ['*.md.js'], // Will match js code inside *.md files
+      files: ['*.md.js'],  // Will match js code inside *.md files
+      parserOptions: {
+        sourceType: 'module',
+        allowImportExportEverywhere: true,
+      },
       rules: {
-        // Example - disable 2 core eslint rules 'no-unused-vars' and 'no-undef'
-        'no-unused-vars': 'off',
-        'no-undef': 'off',
-        // 'semi': ['error', 'never'],
-        // 'quotes': ['error', 'single'],
-        "indent": ["error", 2],
         'prettier/prettier': [
           'error',
-          // Important to force prettier to use "markdown" parser - otherwise it wouldn't be able to parse *.md files.
-          // You also can configure other options supported by prettier here - "prose-wrap" is
-          // particularly useful for *.md files
           {
             singleQuote: true,
-            semicolons: false,
-            parser: 'markdown',
+            semi: false,
           },
         ],
       },
