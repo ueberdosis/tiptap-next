@@ -49,7 +49,7 @@ CodeSandbox is an online coding environment. It’s great to fiddle around witho
 
 It’s also amazing for bug reports. Try to recreate a bug there and share it with us before you [file an issue on GitHub](https://github.com/ueberdosis/tiptap-next/issues/new). This helps a ton to fix bugs faster.
 
-* [Vue.js/tiptap on CodeSandbox](https://codesandbox.io/s/vue-issue-template-h0g28)
+- [Vue.js/tiptap on CodeSandbox](https://codesandbox.io/s/vue-issue-template-h0g28)
 
 ## CDN
 

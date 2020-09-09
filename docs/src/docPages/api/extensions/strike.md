@@ -1,21 +1,26 @@
 # Strike
+
 Enables you to use the `<s>` HTML tag in the editor.
 
 ## Options
-| Option | Type | Default | Description |
-| ------ | ---- | ------- | ----------- |
-| class | string | – | Add a custom class to the rendered HTML tag. |
+
+| Option | Type   | Default | Description                                  |
+| ------ | ------ | ------- | -------------------------------------------- |
+| class  | string | –       | Add a custom class to the rendered HTML tag. |
 
 ## Commands
-| Command | Options | Description |
-| ------ | ---- | ---------------- |
-| strike | — | Mark text as strikethrough. |
+
+| Command | Options | Description                 |
+| ------- | ------- | --------------------------- |
+| strike  | —       | Mark text as strikethrough. |
 
 ## Keybindings
-* Windows & Linux: `Control` + `D`
-* macOS: `Command` + `D`
+
+- Windows & Linux: `Control` + `D`
+- macOS: `Command` + `D`
 
 ## Usage
+
 ```markup
 <template>
   <div>

@@ -1,4 +1,5 @@
 # TableHeader
+
 Enables you to use the `<th>` HTML tag in the editor.
 
 ::: warning Restrictions

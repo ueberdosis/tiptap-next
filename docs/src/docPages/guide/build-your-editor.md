@@ -4,7 +4,7 @@ In its simplest version tiptap comes very raw. There is no menu, no buttons, no 
 
 ## Adding a menu
 
-Let’s start to add your first button to the editor. Once initiated the editor has a powerful API. The so called *commands* allow you to modify selected text (and tons of other things). Here is an example with one single button:
+Let’s start to add your first button to the editor. Once initiated the editor has a powerful API. The so called _commands_ allow you to modify selected text (and tons of other things). Here is an example with one single button:
 
 <demo name="SimpleMenuBar" highlight="5-11" />
 
@@ -14,7 +14,7 @@ You might wonder what features tiptap supports out of the box. In the above exam
 
 ### Related Links
 
-* [List of available commands](/api/commands)
+- [List of available commands](/api/commands)
 
 ## Configure extensions
 
@@ -28,19 +28,19 @@ That’s also the place where you can register custom extensions, which you or s
 
 ### Related links
 
-* [List of available commands](/api/commands)
-* [List of available extensions](/api/extensions)
-* Build custom extensions
+- [List of available commands](/api/commands)
+- [List of available extensions](/api/extensions)
+- Build custom extensions
 
 ## Difference between nodes and marks
 
 tiptap used a JSON schema under the hood. Every part of the text is stored as a specific type. There is a `Document` type (it’s needed, but invisible – like the `<body>` in HTML).
 
-*Nodes* are like blocks of content, for example a paragraph or a headline. Yes, this paragraph is a node.
+_Nodes_ are like blocks of content, for example a paragraph or a headline. Yes, this paragraph is a node.
 
-*Marks* can apply a different style to parts of text inside a node. A good example is **bold text**. That’s a mark. *Italic*, `inline code` or [links](#) are marks too.
+_Marks_ can apply a different style to parts of text inside a node. A good example is **bold text**. That’s a mark. _Italic_, `inline code` or [links](#) are marks too.
 
 ### Related links
 
-* [Learn more about the schema](/api/schema)
-* [List of available extensions](/api/extensions)
+- [Learn more about the schema](/api/schema)
+- [List of available extensions](/api/extensions)

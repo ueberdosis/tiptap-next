@@ -1,4 +1,5 @@
 # TableCell
+
 Enables you to use the `<td>` HTML tag in the editor.
 
 ::: warning Restrictions

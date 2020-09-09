@@ -1,4 +1,5 @@
 # TodoList
+
 Renders a toggleable list of items.
 
 ::: warning Restrictions
@@ -6,17 +7,21 @@ This extensions is intended to be used with the `TodoItem` extension.
 :::
 
 ## Options
-*None*
+
+_None_
 
 ## Commands
-| Command | Options | Description |
-| ------ | ---- | ---------------- |
-| todo_list | — | Toggle todo list. |
+
+| Command   | Options | Description       |
+| --------- | ------- | ----------------- |
+| todo_list | —       | Toggle todo list. |
 
 ## Keybindings
-*None*
+
+_None_
 
 ## Usage
+
 ```markup
 <template>
   <div>

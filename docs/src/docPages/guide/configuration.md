@@ -22,4 +22,4 @@ This will set the focus to tiptap after the editor is initialized. Of course, th
 
 ### Related links
 
-* [See available options](#)
+- [See available options](#)

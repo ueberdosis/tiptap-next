@@ -1,11 +1,15 @@
 # CodeBlock
+
 Enables you to use the `<pre>` HTML tag in the editor.
 
 ## Options
-*None*
+
+_None_
 
 ## Commands
-*None*
+
+_None_
 
 ## Keybindings
-*None*
+
+_None_

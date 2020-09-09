@@ -1,11 +1,15 @@
 # CodeBlockHighlight
+
 Enables you to use the `<pre>` HTML tag with auto-detected syntax highlighting in the editor.
 
 ## Options
-*None*
+
+_None_
 
 ## Commands
-*None*
+
+_None_
 
 ## Keybindings
-*None*
+
+_None_

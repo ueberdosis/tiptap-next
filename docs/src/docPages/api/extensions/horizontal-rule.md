@@ -1,20 +1,25 @@
 # HorizontalRule
+
 Enables you to use the `<hr>` HTML tag in the editor.
 
 ## Options
-| Option | Type | Default | Description |
-| ------ | ---- | ------- | ----------- |
-| class | string | – | Add a custom class to the rendered HTML tag. |
+
+| Option | Type   | Default | Description                                  |
+| ------ | ------ | ------- | -------------------------------------------- |
+| class  | string | –       | Add a custom class to the rendered HTML tag. |
 
 ## Commands
-| Command | Options | Description |
-| ------ | ---- | ---------------- |
-| horizontal_rule | — | Create a horizontal rule. |
+
+| Command         | Options | Description               |
+| --------------- | ------- | ------------------------- |
+| horizontal_rule | —       | Create a horizontal rule. |
 
 ## Keybindings
-*None*
+
+_None_
 
 ## Usage
+
 ```markup
 <template>
   <div>

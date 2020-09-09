@@ -2,16 +2,18 @@
 
 ## Reasons to upgrade to tiptap 2.x
 
-* TypeScript: auto complete, less bugs, generated API documentation
-* Amazing documentation with 100+ pages
-* Active maintenance, no more updates to 1.x
-* Tons of new extensions planned
-* Less bugs, tested code based
+- TypeScript: auto complete, less bugs, generated API documentation
+- Amazing documentation with 100+ pages
+- Active maintenance, no more updates to 1.x
+- Tons of new extensions planned
+- Less bugs, tested code based
 
 ## Upgrading from 1.x to 2.x
+
 The new API will look pretty familiar too you, but there are a ton of changes though. To make the upgrade a little bit easier, here is everything you should do:
 
 ### New document type
+
 **We renamed the default `Document` type from `doc` to `document`.** To keep it like that, use your own implementation of the `Document` node or migrate the stored JSON to use the new name.
 
 ```js

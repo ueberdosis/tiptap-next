@@ -30,4 +30,4 @@ Congrats! You’ve got it! 🎉 Let’s start to configure your editor in the ne
 
 ### Related links
 
-* [tiptap doesn’t have a default styling](#)
+- [tiptap doesn’t have a default styling](#)
