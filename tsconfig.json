@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "baseUrl": ".",
     "allowJs": false,
     "checkJs": false,
@@ -23,6 +23,9 @@
       "dom",
       "dom.iterable",
       "scripthost"
+    ],
+    "types": [
+      "cypress"
     ]
   },
   "files": [
@@ -31,5 +34,8 @@
   "exclude": [
     "node_modules",
     "dist"
+  ],
+  "include": [
+    "**/*.*"
   ]
 }
