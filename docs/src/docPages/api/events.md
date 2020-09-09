@@ -3,6 +3,7 @@
 :::warning Out of date
 
 This content is written for tiptap 1 and needs an update.
+
 :::
 
 There are some events you can listen for. A full list of events can be found [here](/api/classes.md#editor-options).

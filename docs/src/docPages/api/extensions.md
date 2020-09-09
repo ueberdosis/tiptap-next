@@ -48,6 +48,7 @@ You don’t have to use it, but we prepared a `@tiptap/vue-starter-kit` which in
 :::warning Work in Progress
 
 This section is not ready yet. Meanwhile, [search through the GitHub issues](https://github.com/ueberdosis/tiptap/issues) to find code snippets.
+
 :::
 
 ## Your custom extensions

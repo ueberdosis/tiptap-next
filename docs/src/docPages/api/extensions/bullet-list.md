@@ -5,6 +5,7 @@ This extension enables you to use the `<ul>` HTML tag in the editor.
 :::warning Restrictions
 
 It’s intended to be used with the `ListItem` extension.
+
 :::
 
 ## Options

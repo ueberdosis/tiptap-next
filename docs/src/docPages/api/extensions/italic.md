@@ -5,6 +5,7 @@ This extension is used to render text in _italic_. If you pass `<em>`, `<i>` tag
 :::warning Restrictions
 
 The extension will generate the corresponding `<em>` HTML tags when reading contents of the `Editor` instance. All text marked italic, regardless of the method will be normalized to `<em>` HTML tags.
+
 :::
 
 ## Options

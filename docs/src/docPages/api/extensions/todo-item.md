@@ -5,6 +5,7 @@ It renders a single toggleable item of a list.
 :::warning Restrictions
 
 This extensions is intended to be used with the `TodoList` extension.
+
 :::
 
 ## Options

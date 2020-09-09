@@ -3,6 +3,7 @@
 :::warning Out of date
 
 This content is written for tiptap 1 and needs an update.
+
 :::
 
 Unlike many other editors, tiptap is based on a [schema](https://prosemirror.net/docs/guide/#schema) that defines how your content is structured. This enables you to define the kind of nodes that may occur in the document, its attributes and the way they can be nested.
