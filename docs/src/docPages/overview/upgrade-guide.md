@@ -31,7 +31,3 @@ new Editor({
 ### New extension API
 
 In case you’ve built some custom extensions for your project, you’ll need to rewrite them to fit the new API. No worries, though, you can keep a lot of your work though. The schema, commands, keys, inputRules, pasteRules all work like they did before. It’s just different how you register them.
-
-```js
-const CustomExtension = …
-```

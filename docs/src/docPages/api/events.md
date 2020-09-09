@@ -21,7 +21,7 @@ const editor = new Editor({
 It's also possible to register event listeners afterwards.
 
 ```js
-const editor = new Editor(…)
+const editor = new Editor()
 
 editor.on('init', () => {
   // editor is initialized

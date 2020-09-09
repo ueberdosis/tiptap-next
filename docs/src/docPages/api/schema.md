@@ -14,7 +14,7 @@ For example if you paste something like `This is <strong>important</strong>` int
 
 The most simple schema for a typical _ProseMirror_ editor is looking something like that.
 
-```js
+```json
 {
   nodes: {
     document: {
