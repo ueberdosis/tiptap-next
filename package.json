@@ -17,6 +17,8 @@
     "clean:packages": "rm -rf ./packages/*/dist",
     "test:open": "cypress open --project tests",
     "test": "cypress run --project tests",
+    "lint": "eslint --quiet ./**/*.md",
+    "lint:fix": "eslint --quiet --fix ./**/*.md",
     "reset": "clean:packages && rm -rf ./**/.cache && rm -rf ./**/node_modules && rm -rf ./yarn.lock && yarn install"
   },
   "devDependencies": {
@@ -30,6 +32,8 @@
     "@types/prosemirror-transform": "^1.1.1",
     "@types/prosemirror-view": "^1.15.0",
     "cypress": "^5.1.0",
+    "eslint": "^7.8.1",
+    "eslint-plugin-md": "^1.0.19",
     "lerna": "^3.22.1",
     "microbundle": "^0.12.3",
     "sass-loader": "^9.0.3",
