@@ -2,7 +2,8 @@
 
 Enables you to use the `<ol>` HTML tag in the editor.
 
-::: warning Restrictions
+:::warning Restrictions
+
 This extensions is intended to be used with the `ListItem` extension.
 :::
 

@@ -22,7 +22,8 @@ Create a new Vue component (you can call it `<Tiptap />`) and add the following 
 
 <demo name="Guide/GettingStarted" />
 
-::: warning Using with Nuxt.js
+:::warning Using with Nuxt.js
+
 If you are using Nuxt.js, note that tiptap needs to run in the client, not on the server. It’s required to wrap the editor in a `<client-only>` tag.
 :::
 

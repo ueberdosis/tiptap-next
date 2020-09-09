@@ -2,7 +2,8 @@
 
 Renders a toggleable list of items.
 
-::: warning Restrictions
+:::warning Restrictions
+
 This extensions is intended to be used with the `TodoItem` extension.
 :::
 

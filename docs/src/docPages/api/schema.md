@@ -1,6 +1,7 @@
 # Schema
 
 :::warning Out of date
+
 This content is written for tiptap 1 and needs an update.
 :::
 

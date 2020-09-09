@@ -2,7 +2,8 @@
 
 It renders a single toggleable item of a list.
 
-::: warning Restrictions
+:::warning Restrictions
+
 This extensions is intended to be used with the `TodoList` extension.
 :::
 

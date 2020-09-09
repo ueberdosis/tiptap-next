@@ -2,7 +2,8 @@
 
 This extension is used to render text in **bold**. If you pass `<strong>`, `<b>` tags, or text with inline `style` attributes setting the `font-weight` CSS rule in the editor’s initial content, they will all be rendered accordingly.
 
-::: warning Restrictions
+:::warning Restrictions
+
 The extension will generate the corresponding `<strong>` HTML tags when reading contents of the `Editor` instance. All text marked bold, regardless of the method will be normalized to `<strong>` HTML tags.
 :::
 
