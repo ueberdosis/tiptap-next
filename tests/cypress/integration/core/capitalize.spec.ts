@@ -1,4 +1,3 @@
-// any import breaks
 import { capitalize } from '@tiptap/core'
 
 describe('capitalize test', () => {
