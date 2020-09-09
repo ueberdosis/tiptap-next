@@ -74,7 +74,8 @@ export class Editor extends EventEmitter {
     this.registerCommands(commands)
 
     if (this.options.injectCSS) {
-      require('./style.css')
+      // TODO: Find a better way to do this
+      // require('./style.css')
     }
 
     this.proxy.focus(this.options.autoFocus)
