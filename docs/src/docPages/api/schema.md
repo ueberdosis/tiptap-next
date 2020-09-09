@@ -37,7 +37,7 @@ We register three nodes here. `document`, `paragraph` and `text`. `document` is 
 
 In tiptap we define every node in its own `Extension` class instead. This allows us to split logic per node. Under the hood the schema will be merged together.
 
-```js
+```ts
 class Document extends Node {
   name = 'document'
   topNode = true
