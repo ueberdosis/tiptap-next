@@ -8,9 +8,9 @@ describe('editor', () => {
     const editor = new Editor({
       content: '<p>Example Text</p>',
       extensions: [
-        new Document(),
-        new Paragraph(),
-        new Text(),
+        Document(),
+        Paragraph(),
+        Text(),
       ],
     })
 
