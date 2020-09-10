@@ -11,6 +11,7 @@ import getMarkAttrs from './utils/getMarkAttrs'
 import removeElement from './utils/removeElement'
 import getSchemaTypeByName from './utils/getSchemaTypeByName'
 import getHtmlFromFragment from './utils/getHtmlFromFragment'
+import createStyleTag from './utils/createStyleTag'
 import ExtensionManager from './ExtensionManager'
 import EventEmitter from './EventEmitter'
 import Extension from './Extension'
@@ -19,6 +20,7 @@ import Mark from './Mark'
 import ComponentRenderer from './ComponentRenderer'
 import defaultPlugins from './plugins'
 import * as commands from './commands'
+import style from './style'
 
 export type Command = (next: Function, editor: Editor) => (...args: any) => any
 
@@ -44,7 +46,7 @@ export class Editor extends EventEmitter {
   private proxy!: Editor
   private extensionManager!: ExtensionManager
   private commands: { [key: string]: any } = {}
-  private css!: HTMLStyleElement
+  private css!: HTMLElement
   private lastCommand = Promise.resolve()
   public schema!: Schema
   public view!: EditorView
@@ -74,12 +76,7 @@ export class Editor extends EventEmitter {
     this.extensionManager.resolveConfigs()
     this.createView()
     this.registerCommands(commands)
-
-    if (this.options.injectCSS) {
-      // TODO: Find a better way to do this
-      // require('./style.css')
-    }
-
+    this.injectCSS()
     this.proxy.focus(this.options.autoFocus)
   }
 
@@ -98,6 +95,15 @@ export class Editor extends EventEmitter {
     }
 
     return (...args: any) => command(...args)
+  }
+
+  /**
+   * Inject CSS styles.
+   */
+  private injectCSS() {
+    if (this.options.injectCSS && document) {
+      this.css = createStyleTag(style)
+    }
   }
 
   /**
