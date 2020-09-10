@@ -26,11 +26,11 @@ export default {
   mounted() {
     this.editor = new Editor({
       extensions: [
-        new Document(),
-        new Paragraph(),
-        new Text(),
-        new Code(),
-        new Focus({
+        Document(),
+        Paragraph(),
+        Text(),
+        Code(),
+        Focus({
           className: 'has-focus',
           nested: true,
         }),

@@ -57,7 +57,7 @@ export default {
     return {
       editor: new Editor({
         extensions: [
-          new Heading({
+          Heading({
             levels: [1, 2],
           }),
         ],

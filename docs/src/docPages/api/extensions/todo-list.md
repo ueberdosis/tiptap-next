@@ -50,10 +50,10 @@ export default {
     return {
       editor: new Editor({
         extensions: [
-          new TodoItem({
+          TodoItem({
             nested: true,
           }),
-          new TodoList(),
+          TodoList(),
         ],
         content: `
           <ul data-type="todo_list">

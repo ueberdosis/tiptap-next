@@ -52,7 +52,7 @@ export default {
     return {
       editor: new Editor({
         extensions: [
-          new OrderedList(),
+          OrderedList(),
         ],
         content: `
           <ol>
