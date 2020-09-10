@@ -17,7 +17,7 @@ const html = generateHtml({
     }]
   }]
 }, [
-  new Document(),
-  new Paragraph(),
-  new Text(),
+  Document(),
+  Paragraph(),
+  Text(),
 ])
