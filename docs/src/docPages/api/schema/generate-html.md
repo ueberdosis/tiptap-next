@@ -12,6 +12,6 @@ Currently, that works only in the browser (client side), but we’re working on 
 
 We needed to do the same thing in PHP at some point, so we published libraries to convert ProseMirror JSON to HTML and vice-versa:
 
-* [ueberdosis/prosemirror-php](https://github.com/ueberdosis/prosemirror-php) (PHP)
-* [ueberdosis/prosemirror-to-html](https://github.com/ueberdosis/prosemirror-to-html) (PHP)
-* [ueberdosis/html-to-prosemirror](https://github.com/ueberdosis/html-to-prosemirror) (PHP)
+- [ueberdosis/prosemirror-php](https://github.com/ueberdosis/prosemirror-php) (PHP)
+- [ueberdosis/prosemirror-to-html](https://github.com/ueberdosis/prosemirror-to-html) (PHP)
+- [ueberdosis/html-to-prosemirror](https://github.com/ueberdosis/html-to-prosemirror) (PHP)
