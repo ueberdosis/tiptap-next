@@ -43,7 +43,7 @@
     "lerna": "^3.22.1",
     "microbundle": "^0.12.3",
     "sass-loader": "^9.0.3",
-    "typedoc": "^0.18.0",
+    "typedoc": "^0.19.2",
     "typescript": "^4.0.3",
     "vue": "^2.6.12"
   }
