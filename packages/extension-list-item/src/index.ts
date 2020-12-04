@@ -1,47 +1,5 @@
-import { Node, mergeAttributes } from '@tiptap/core'
+import { ListItem } from './list-item'
 
-export interface ListItemOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
-}
-
-const ListItem = Node.create({
-  name: 'listItem',
-
-  defaultOptions: <ListItemOptions>{
-    HTMLAttributes: {},
-  },
-
-  content: 'paragraph block*',
-
-  defining: true,
-
-  parseHTML() {
-    return [
-      {
-        tag: 'li',
-      },
-    ]
-  },
-
-  renderHTML({ HTMLAttributes }) {
-    return ['li', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0]
-  },
-
-  addKeyboardShortcuts() {
-    return {
-      Enter: () => this.editor.commands.splitListItem('listItem'),
-      Tab: () => this.editor.commands.sinkListItem('listItem'),
-      'Shift-Tab': () => this.editor.commands.liftListItem('listItem'),
-    }
-  },
-})
+export * from './list-item'
 
 export default ListItem
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    ListItem: typeof ListItem,
-  }
-}
