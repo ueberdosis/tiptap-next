@@ -1,15 +1,5 @@
-import { Node } from '@tiptap/core'
+import { Document } from './document'
 
-const Document = Node.create({
-  name: 'document',
-  topNode: true,
-  content: 'block+',
-})
+export * from './document'
 
 export default Document
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Document: typeof Document,
-  }
-}
