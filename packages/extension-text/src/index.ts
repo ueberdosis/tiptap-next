@@ -1,14 +1,5 @@
-import { Node } from '@tiptap/core'
+import { Text } from './text'
 
-const Text = Node.create({
-  name: 'text',
-  group: 'inline',
-})
+export * from './text'
 
 export default Text
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Text: typeof Text,
-  }
-}
