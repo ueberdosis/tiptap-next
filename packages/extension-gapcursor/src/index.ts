@@ -1,20 +1,5 @@
-import { Extension } from '@tiptap/core'
-import { gapCursor } from 'prosemirror-gapcursor'
+import { Gapcursor } from './gapcursor'
 
-const Gapcursor = Extension.create({
-  name: 'gapCursor',
-
-  addProseMirrorPlugins() {
-    return [
-      gapCursor(),
-    ]
-  },
-})
+export * from './gapcursor'
 
 export default Gapcursor
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Gapcursor: typeof Gapcursor,
-  }
-}
