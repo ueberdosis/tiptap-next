@@ -33,7 +33,7 @@ context('/api/nodes/code-block', () => {
       .should('contain', 'Example Text')
   })
 
-  it('the button should toggle the code block', () => {
+  it('toggles the code block when pressing the button', () => {
     cy.get('.demo__preview button:first')
       .click()
 
@@ -49,6 +49,21 @@ context('/api/nodes/code-block', () => {
 
     cy.get('.ProseMirror pre')
       .should('not.exist')
+  })
+
+  it.only('transforms multiple nodes to one code block', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.setContent('<p>Example paragraph</p><p>Another example paragraph</p>')
+      editor.commands.selectAll()
+    })
+
+    cy.get('.demo__preview button:first')
+      .click()
+
+    cy.get('.ProseMirror')
+      .find('pre')
+      .its('length')
+      .should('eq', 1)
   })
 
   it('the keyboard shortcut should make the selected line a code block', () => {
