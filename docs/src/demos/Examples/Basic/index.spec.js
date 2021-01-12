@@ -19,4 +19,18 @@ context('/examples/basic', () => {
       .find('p')
       .should('contain', 'Example Text')
   })
+
+  it.only('keeps line breaks from pasted plain text', () => {
+    const text = `Paragraph 1
+Paragraph 1
+
+Paragraph 2`
+    const html = '<p>Paragraph 1<br />Paragraph 1</p><p>Paragraph 2</p>'
+
+    cy.get('.ProseMirror').paste({ pastePayload: text, pasteType: 'text/plain' })
+
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      expect(editor.getHTML()).to.eq(html)
+    })
+  })
 })
