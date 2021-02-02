@@ -3,6 +3,10 @@ import { textblockTypeInputRule } from 'prosemirror-inputrules'
 
 export interface CodeBlockOptions {
   languageClassPrefix: string,
+  /**
+   * Whitespace for indentation (on Tab)
+   */
+  indentation: string,
   HTMLAttributes: {
     [key: string]: any
   },
@@ -16,6 +20,7 @@ export const CodeBlock = Node.create({
 
   defaultOptions: <CodeBlockOptions>{
     languageClassPrefix: 'language-',
+    indentation: '    ',
     HTMLAttributes: {},
   },
 
@@ -92,6 +97,9 @@ export const CodeBlock = Node.create({
   addKeyboardShortcuts() {
     return {
       'Mod-Alt-c': () => this.editor.commands.toggleCodeBlock(),
+      Tab: () => {
+        return this.editor.commands.insertText(this.options.indentation)
+      },
     }
   },
 
