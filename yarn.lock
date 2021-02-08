@@ -11553,9 +11553,9 @@ prosemirror-tables@*, prosemirror-tables@^1.1.1:
     prosemirror-view "^1.13.3"
 
 prosemirror-transform@^1.0.0, prosemirror-transform@^1.1.0, prosemirror-transform@^1.2.1, prosemirror-transform@^1.2.10:
-  version "1.2.10"
-  resolved "https://registry.yarnpkg.com/prosemirror-transform/-/prosemirror-transform-1.2.10.tgz#8b8dd85dbd558d4b22a50b2c97571b8bbe8bf926"
-  integrity sha512-Wt3Z3PvUdUv5KThCe3XfycCVxqldSDWsjd42NJLrnvoMScWRVSMDKF4D/UamJ+lOEWHzxK7J2232c+WFu1XUrg==
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/prosemirror-transform/-/prosemirror-transform-1.2.11.tgz#87fc53b2b1344ca4c2c4cb3f3b61486794b6a0b3"
+  integrity sha512-i4N5bMZcmhZPJw1ULH2Ne6SumqrkWBQpJXo/PN6xwq8kv6q7IZVYDjF7DRe2vp3AiqZ/5KnLucJM7e82875LyQ==
   dependencies:
     prosemirror-model "^1.0.0"
 
