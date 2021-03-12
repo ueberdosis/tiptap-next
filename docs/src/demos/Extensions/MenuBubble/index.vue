@@ -50,7 +50,7 @@ export default {
         MenuBubble.configure({
           menuEl: bubbleMenu,
           xOffset: 0,
-          yOffset: -10,
+          yOffset: -36,
         }),
       ],
       content: `
