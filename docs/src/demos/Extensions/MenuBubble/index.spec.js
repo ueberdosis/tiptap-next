@@ -3,5 +3,6 @@ context('/demos/Extensions/MenuBubble', () => {
     cy.visit('/demos/Extensions/MenuBubble')
   })
 
-  // TODO: Write tests
+  
+  // cy.get('p').setSelection('established')
 })

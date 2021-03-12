@@ -34,6 +34,7 @@ function coordsAtPos(view: EditorView, pos: number, end = false) {
   const { node, offset } = view.domAtPos(pos); //view.docView.domFromPos(pos);
   let side: DOMRectSide | null = null;
   let rect: DOMRect | null = null;
+
   if (node.nodeType === 3) {
     const nodeValue = node.nodeValue || "";
     if (end && offset < nodeValue.length) {
@@ -52,6 +53,7 @@ function coordsAtPos(view: EditorView, pos: number, end = false) {
       );
       side = "left";
     }
+
     if ((!rect || rect.top === rect.bottom) && offset) {
       const child = node.childNodes[offset - 1];
       rect = singleRect(
@@ -75,6 +77,7 @@ function coordsAtPos(view: EditorView, pos: number, end = false) {
       right: x,
     };
   }
+
   return {
     top: 0,
     bottom: 0,
@@ -83,8 +86,8 @@ function coordsAtPos(view: EditorView, pos: number, end = false) {
   };
 }
 
-function hide(menuEl: HTMLElement | null) {
-  if (!menuEl) {
+function hide(options: MenuBubbleOptions) {
+  if (!options.menuEl) {
     return;
   }
   
@@ -92,8 +95,8 @@ function hide(menuEl: HTMLElement | null) {
     position: "absolute",
     left: "-100000px",
   }
-
-  Object.assign(menuEl.style, attrs)
+  options.isActive = false;
+  Object.assign(options.menuEl.style, attrs)
 }
 
 
@@ -109,8 +112,7 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
   },
 
   onCreate() {
-    const { options } = this
-    hide(options.menuEl)
+    hide(this.options)
   },
 
   onSelectionUpdate() {
@@ -118,7 +120,7 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
     const { from, to } = editor.state.selection
 
     if (editor.state.selection.empty) {
-      hide(options.menuEl);
+      hide(options);
       return;
     }
 
@@ -132,7 +134,7 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
     const parent = options.menuEl ? options.menuEl.offsetParent : null;
 
     if (!parent) {
-      hide(options.menuEl);
+      hide(options);
       return;
     }
 
@@ -147,7 +149,7 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
       left: options.xOffset + left + "px",
       top: options.yOffset + start.top + "px",
     }
-
+    options.isActive = true;
     Object.assign(options.menuEl.style, attrs)
   },
 
