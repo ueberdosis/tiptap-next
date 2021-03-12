@@ -202,6 +202,8 @@
           link: /api/extensions/gapcursor
         - title: History
           link: /api/extensions/history
+        - title: MenuBubble
+          link: /api/extensions/menu-bubble
         - title: TextAlign
           link: /api/extensions/text-align
         - title: Typography

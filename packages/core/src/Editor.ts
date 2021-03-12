@@ -398,6 +398,7 @@ export class Editor extends EventEmitter {
    * Get the document as JSON.
    */
   public getJSON(): AnyObject {
+    console.log("BOOM NEXT")
     return this.state.doc.toJSON()
   }
 
