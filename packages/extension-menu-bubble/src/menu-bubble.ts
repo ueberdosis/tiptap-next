@@ -23,7 +23,6 @@ function hide(options: MenuBubbleOptions) {
   Object.assign(options.menuEl.style, attrs)
 }
 
-
 export const MenuBubble = Extension.create<MenuBubbleOptions>({
   name: 'menuBubble',
 
@@ -48,16 +47,8 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
       return;
     }
 
-    // const start = coordsAtPos(editor.view, from);
-    // const end = coordsAtPos(editor.view, to, true);
     const start = editor.view.coordsAtPos(from);
     const end = editor.view.coordsAtPos(to);
-    // console.log("START1", start)
-    // console.log("START2", start2)
-    // console.log("END1", end)
-    // console.log("END2", end2)
-
-
 
     if (!options.menuEl) {
       return;
