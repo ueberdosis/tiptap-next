@@ -19,6 +19,7 @@ function hide(options: MenuBubbleOptions) {
     position: "absolute",
     left: "-100000px",
   }
+
   options.isActive = false;
   Object.assign(options.menuEl.style, attrs)
 }
@@ -29,7 +30,7 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
   defaultOptions: {
     menuEl: null,
     xOffset: 0,
-    yOffset: -20,
+    yOffset: -36,
     isActive: false,
     keepInBounds: true,
   },
@@ -72,8 +73,8 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
       left: options.xOffset + left + "px",
       top: options.yOffset + start.top + "px",
     }
+    
     options.isActive = true;
     Object.assign(options.menuEl.style, attrs)
   },
-
 })
