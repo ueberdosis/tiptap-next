@@ -1,4 +1,4 @@
-# @tiptap/extension-table
+# @tiptap/extension-menu-bubble
 [![Version](https://img.shields.io/npm/v/@tiptap/extension-menu-bubble.svg?label=version)](https://www.npmjs.com/package/@tiptap/extension-menu-bubble)
 [![Downloads](https://img.shields.io/npm/dm/@tiptap/extension-menu-bubble.svg)](https://npmcharts.com/compare/tiptap?minimal=true)
 [![License](https://img.shields.io/npm/l/@tiptap/extension-menu-bubble.svg)](https://www.npmjs.com/package/@tiptap/extension-menu-bubble)
