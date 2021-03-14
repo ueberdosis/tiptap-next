@@ -12,15 +12,15 @@ export interface MenuBubbleOptions {
 
 function hide(options: MenuBubbleOptions) {
   if (!options.menuEl) {
-    return;
-  }
-  
-  const attrs = {
-    position: "absolute",
-    left: "-100000px",
+    return
   }
 
-  options.isActive = false;
+  const attrs = {
+    position: 'absolute',
+    left: '-100000px',
+  }
+
+  options.isActive = false
   Object.assign(options.menuEl.style, attrs)
 }
 
@@ -44,37 +44,37 @@ export const MenuBubble = Extension.create<MenuBubbleOptions>({
     const { from, to } = editor.state.selection
 
     if (editor.state.selection.empty) {
-      hide(options);
-      return;
+      hide(options)
+      return
     }
 
-    const start = editor.view.coordsAtPos(from);
-    const end = editor.view.coordsAtPos(to);
+    const start = editor.view.coordsAtPos(from)
+    const end = editor.view.coordsAtPos(to)
 
     if (!options.menuEl) {
-      return;
+      return
     }
 
-    const parent = options.menuEl ? options.menuEl.offsetParent : null;
+    const parent = options.menuEl ? options.menuEl.offsetParent : null
 
     if (!parent) {
-      hide(options);
-      return;
+      hide(options)
+      return
     }
 
-    const box = parent.getBoundingClientRect();
-    const el = options.menuEl.getBoundingClientRect();
-    const left = (start.left + end.left) / 2 - options.menuEl.offsetWidth / 2;
+    const box = parent.getBoundingClientRect()
+    const el = options.menuEl.getBoundingClientRect()
+    const left = (start.left + end.left) / 2 - options.menuEl.offsetWidth / 2
 
     const attrs = {
-      position: "absolute",
+      position: 'absolute',
       zIndex: 1000,
-      display: "block",
-      left: options.xOffset + left + "px",
-      top: options.yOffset + start.top + "px",
+      display: 'block',
+      left: `${options.xOffset + left}px`,
+      top: `${options.yOffset + start.top}px`,
     }
-    
-    options.isActive = true;
+
+    options.isActive = true
     Object.assign(options.menuEl.style, attrs)
   },
 })
