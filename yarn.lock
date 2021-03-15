@@ -15391,8 +15391,8 @@ yauzl@^2.10.0, yauzl@^2.4.2:
     fd-slicer "~1.1.0"
 
 yjs@^13.5.1:
-  version "13.5.1"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.5.1.tgz#addf14fb4120ee007497fcad327eae983b6ec220"
-  integrity sha512-U4BKBlcgvcYS/MkYYhW6zcE34dyYBvoZLl+9J9oFkYs6dHCXvX6WzZSgxlNnqjZn40jAN12Z0bSugqXuLVf2/g==
+  version "13.5.2"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.5.2.tgz#b518be0df84164591f4cc774aa24468d288e0e75"
+  integrity sha512-X5vscuAhQIYf77xuNeJSlEiQZq0aUVtvs3x2X3//ZGpDqcWiR3D0H1XMDfEnNzdTMzuhfDBMMxSl70klD+0OXw==
   dependencies:
     lib0 "^0.2.38"
