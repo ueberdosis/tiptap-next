@@ -33,7 +33,7 @@
     "@babel/preset-react": "^7.13.13",
     "@lerna/batch-packages": "^3.16.0",
     "@lerna/filter-packages": "^3.18.0",
-    "@lerna/project": "^3.21.0",
+    "@lerna/project": "^4.0.0",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
