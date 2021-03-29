@@ -11838,19 +11838,10 @@ prosemirror-transform@^1.0.0, prosemirror-transform@^1.1.0, prosemirror-transfor
   dependencies:
     prosemirror-model "^1.0.0"
 
-prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3:
-  version "1.18.0"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.18.0.tgz#92d27b2583877938c529e173e6e3a0f3f6aa0e1c"
-  integrity sha512-UoY29oeWruT6RKhH7wGytUBVrlaszNx43wvOxZPCMjYPvKBT21EIXR8Ezr/3XstvFVBQAWdDh6Ke0qHmF43y/A==
-  dependencies:
-    prosemirror-model "^1.1.0"
-    prosemirror-state "^1.0.0"
-    prosemirror-transform "^1.1.0"
-
-prosemirror-view@^1.18.1:
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.18.1.tgz#52ad1c67f51144e27e368bba129142ce87c7791e"
-  integrity sha512-TZd8byDRfdopLiokBY7T27msCSfWqqRxWs/LnBbdI030F+iI2kS+tO59/XFnpZxMLFKlJgOgGGhM9SzD1Nwdxw==
+prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3, prosemirror-view@^1.18.1:
+  version "1.18.2"
+  resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.18.2.tgz#dd5d72e90266ec897464005eb6090fbc6acfeb11"
+  integrity sha512-dgJiPMC7fTtndwSthuIW4P2GlSRL+7JFrVPt+tvAkZ9Kq6xWaAbyZOvGKziTJnoiXk9qAGyqELSHhiJ3t6iNfQ==
   dependencies:
     prosemirror-model "^1.1.0"
     prosemirror-state "^1.0.0"
