@@ -1,0 +1,24 @@
+{
+  "name": "vite",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@tiptap/core": "^2.0.0-beta.9",
+    "@tiptap/extension-document": "^2.0.0-beta.1",
+    "@tiptap/extension-paragraph": "^2.0.0-beta.1",
+    "@tiptap/extension-text": "^2.0.0-beta.1",
+    "postscribe": "^2.0.8",
+    "vue": "^3.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.1.5",
+    "@vue/compiler-sfc": "^3.0.5",
+    "typescript": "^4.1.3",
+    "vite": "^2.1.3",
+    "vue-tsc": "^0.0.8"
+  }
+}
