@@ -2,7 +2,7 @@
   "name": "vite",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },

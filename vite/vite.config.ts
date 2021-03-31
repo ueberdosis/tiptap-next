@@ -11,7 +11,16 @@ export default defineConfig({
     alias: globby.sync('../packages/*', { onlyDirectories: true })
       .map(name => name.replace('../packages/', ''))
       .map(name => {
-        return { find: `/@tiptap/${name}`, replacement: path.resolve(`../packages/${name}/src/index.ts`) }
-      }),
+        return [
+          {
+            find: `@tiptap/${name}`,
+            replacement: path.resolve(`../packages/${name}/src/index.ts`),
+          },
+          {
+            find: `/@tiptap/${name}`,
+            replacement: path.resolve(`../packages/${name}/src/index.ts`),
+          },
+        ]
+      }).flat(),
   },
 })
