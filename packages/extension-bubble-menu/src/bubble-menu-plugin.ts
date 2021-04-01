@@ -118,7 +118,6 @@ export class BubbleMenuView {
 
   render() {
     Object.assign(this.element.style, {
-      whiteSpace: 'nowrap',
       position: 'absolute',
       zIndex: 1,
       visibility: this.isActive ? 'visible' : 'hidden',
