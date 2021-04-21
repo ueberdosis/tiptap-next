@@ -68,4 +68,18 @@ context('/demos/Marks/Code', () => {
       .find('code')
       .should('contain', 'Example')
   })
+
+  it.only('leaves the inline code mark with keyboard shortcut', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.clearContent()
+
+      cy.get('.ProseMirror')
+        .type('`Example`{leftarrow}{rightarrow}')
+        .trigger('keydown', { shiftKey: true, key: 'Enter' })
+        .type('Text')
+        .find('code')
+        .should('contain', 'Example')
+        .should('not.contain', 'ExampleText')
+    })
+  })
 })
