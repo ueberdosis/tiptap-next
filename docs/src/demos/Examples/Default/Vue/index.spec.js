@@ -19,4 +19,20 @@ context('/demos/Examples/Default/Vue', () => {
       .find('p')
       .should('contain', 'Example Text')
   })
+
+  it.only('transforms bullet lists to headings', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.setContent('<p>Paragraph</p><ul><li>List item</li></ul>')
+      editor.commands.selectAll()
+      editor.commands.setHeading({ level: 1 })
+
+      cy.get('.ProseMirror')
+        .find('h1')
+        .should('contain', 'Paragraph')
+
+      cy.get('.ProseMirror')
+        .find('h1')
+        .should('contain', 'List item')
+    })
+  })
 })
