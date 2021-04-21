@@ -7,18 +7,35 @@ import {
 } from '@tiptap/core'
 
 export interface CodeOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    code: {
+      /**
+       * Set a code mark
+       */
+      setCode: () => Command,
+      /**
+       * Toggle inline code
+       */
+      toggleCode: () => Command,
+      /**
+       * Unset a code mark
+       */
+      unsetCode: () => Command,
+    }
+  }
 }
 
 export const inputRegex = /(?:^|\s)((?:`)((?:[^`]+))(?:`))$/gm
 export const pasteRegex = /(?:^|\s)((?:`)((?:[^`]+))(?:`))/gm
 
-export const Code = Mark.create({
+export const Code = Mark.create<CodeOptions>({
   name: 'code',
 
-  defaultOptions: <CodeOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -36,22 +53,13 @@ export const Code = Mark.create({
 
   addCommands() {
     return {
-      /**
-       * Set a code mark
-       */
-      setCode: (): Command => ({ commands }) => {
+      setCode: () => ({ commands }) => {
         return commands.setMark('code')
       },
-      /**
-       * Toggle inline code
-       */
-      toggleCode: (): Command => ({ commands }) => {
+      toggleCode: () => ({ commands }) => {
         return commands.toggleMark('code')
       },
-      /**
-       * Unset a code mark
-       */
-      unsetCode: (): Command => ({ commands }) => {
+      unsetCode: () => ({ commands }) => {
         return commands.unsetMark('code')
       },
     }
@@ -75,9 +83,3 @@ export const Code = Mark.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Code: typeof Code,
-  }
-}

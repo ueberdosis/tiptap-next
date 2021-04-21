@@ -11,7 +11,9 @@ module.exports = {
     {
       files: [
         './**/*.ts',
+        './**/*.tsx',
         './**/*.js',
+        './**/*.jsx',
         './**/*.vue',
       ],
       plugins: [
@@ -27,6 +29,7 @@ module.exports = {
         window: false,
       },
       extends: [
+        'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:vue/strongly-recommended',
         'airbnb-base',
@@ -35,6 +38,7 @@ module.exports = {
         'no-alert': 'off',
         'no-console': ['warn', { allow: ['warn', 'error'] }],
         semi: ['error', 'never'],
+        'import/order': 'off',
         'import/extensions': 'off',
         'import/no-extraneous-dependencies': 'off',
         'import/no-unresolved': 'off',
@@ -55,9 +59,11 @@ module.exports = {
             allowFirstLine: false,
           },
         }],
+        'vue/singleline-html-element-content-newline': 'off',
         'no-param-reassign': 'off',
         'import/prefer-default-export': 'off',
         'consistent-return': 'off',
+        'prefer-destructuring': 'off',
         'no-redeclare': 'off',
         '@typescript-eslint/no-redeclare': ['error'],
         'no-unused-vars': 'off',
@@ -67,6 +73,8 @@ module.exports = {
         'no-dupe-class-members': 'off',
         '@typescript-eslint/no-dupe-class-members': ['error'],
         'lines-between-class-members': 'off',
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': ['error'],
         '@typescript-eslint/lines-between-class-members': ['error'],
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-empty-interface': 'off',

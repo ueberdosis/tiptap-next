@@ -3,18 +3,31 @@ import { textblockTypeInputRule } from 'prosemirror-inputrules'
 
 export interface CodeBlockOptions {
   languageClassPrefix: string,
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    codeBlock: {
+      /**
+       * Set a code block
+       */
+      setCodeBlock: (attributes?: { language: string }) => Command,
+      /**
+       * Toggle a code block
+       */
+      toggleCodeBlock: (attributes?: { language: string }) => Command,
+    }
+  }
 }
 
 export const backtickInputRegex = /^```(?<language>[a-z]*)? $/
 export const tildeInputRegex = /^~~~(?<language>[a-z]*)? $/
 
-export const CodeBlock = Node.create({
+export const CodeBlock = Node.create<CodeBlockOptions>({
   name: 'codeBlock',
 
-  defaultOptions: <CodeBlockOptions>{
+  defaultOptions: {
     languageClassPrefix: 'language-',
     HTMLAttributes: {},
   },
@@ -74,16 +87,10 @@ export const CodeBlock = Node.create({
 
   addCommands() {
     return {
-      /**
-       * Set a code block
-       */
-      setCodeBlock: (attributes?: { language: string }): Command => ({ commands }) => {
+      setCodeBlock: attributes => ({ commands }) => {
         return commands.setNode('codeBlock', attributes)
       },
-      /**
-       * Toggle a code block
-       */
-      toggleCodeBlock: (attributes?: { language: string }): Command => ({ commands }) => {
+      toggleCodeBlock: attributes => ({ commands }) => {
         return commands.toggleNode('codeBlock', 'paragraph', attributes)
       },
     }
@@ -92,6 +99,22 @@ export const CodeBlock = Node.create({
   addKeyboardShortcuts() {
     return {
       'Mod-Alt-c': () => this.editor.commands.toggleCodeBlock(),
+
+      // remove code block when at start of document or code block is empty
+      Backspace: () => {
+        const { empty, $anchor } = this.editor.state.selection
+        const isAtStart = $anchor.pos === 1
+
+        if (!empty || $anchor.parent.type.name !== this.name) {
+          return false
+        }
+
+        if (isAtStart || !$anchor.parent.textContent.length) {
+          return this.editor.commands.clearNodes()
+        }
+
+        return false
+      },
     }
   },
 
@@ -102,9 +125,3 @@ export const CodeBlock = Node.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    CodeBlock: typeof CodeBlock,
-  }
-}

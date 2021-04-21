@@ -1,9 +1,17 @@
 import { joinForward as originalJoinForward } from 'prosemirror-commands'
-import { Command } from '../types'
+import { Command, RawCommands } from '../types'
 
-/**
- * Join two nodes forward.
- */
-export const joinForward = (): Command => ({ state, dispatch }) => {
+declare module '@tiptap/core' {
+  interface Commands {
+    joinForward: {
+      /**
+       * Join two nodes forward.
+       */
+      joinForward: () => Command,
+    }
+  }
+}
+
+export const joinForward: RawCommands['joinForward'] = () => ({ state, dispatch }) => {
   return originalJoinForward(state, dispatch)
 }

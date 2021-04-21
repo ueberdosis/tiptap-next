@@ -7,9 +7,26 @@ import {
 } from '@tiptap/core'
 
 export interface ItalicOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    italic: {
+      /**
+       * Set an italic mark
+       */
+      setItalic: () => Command,
+      /**
+       * Toggle an italic mark
+       */
+      toggleItalic: () => Command,
+      /**
+       * Unset an italic mark
+       */
+      unsetItalic: () => Command,
+    }
+  }
 }
 
 export const starInputRegex = /(?:^|\s)((?:\*)((?:[^*]+))(?:\*))$/gm
@@ -17,10 +34,10 @@ export const starPasteRegex = /(?:^|\s)((?:\*)((?:[^*]+))(?:\*))/gm
 export const underscoreInputRegex = /(?:^|\s)((?:_)((?:[^_]+))(?:_))$/gm
 export const underscorePasteRegex = /(?:^|\s)((?:_)((?:[^_]+))(?:_))/gm
 
-export const Italic = Mark.create({
+export const Italic = Mark.create<ItalicOptions>({
   name: 'italic',
 
-  defaultOptions: <ItalicOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -45,22 +62,13 @@ export const Italic = Mark.create({
 
   addCommands() {
     return {
-      /**
-       * Set an italic mark
-       */
-      setItalic: (): Command => ({ commands }) => {
+      setItalic: () => ({ commands }) => {
         return commands.setMark('italic')
       },
-      /**
-       * Toggle an italic mark
-       */
-      toggleItalic: (): Command => ({ commands }) => {
+      toggleItalic: () => ({ commands }) => {
         return commands.toggleMark('italic')
       },
-      /**
-       * Unset an italic mark
-       */
-      unsetItalic: (): Command => ({ commands }) => {
+      unsetItalic: () => ({ commands }) => {
         return commands.unsetMark('italic')
       },
     }
@@ -86,9 +94,3 @@ export const Italic = Mark.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Italic: typeof Italic,
-  }
-}

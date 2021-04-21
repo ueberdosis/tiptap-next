@@ -1,6 +1,6 @@
-context('/api/marks/highlight', () => {
+context('/demos/Marks/Highlight', () => {
   before(() => {
-    cy.visit('/api/marks/highlight')
+    cy.visit('/demos/Marks/Highlight')
   })
 
   beforeEach(() => {
@@ -14,7 +14,7 @@ context('/api/marks/highlight', () => {
   })
 
   it('the button should highlight the selected text', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -108,13 +108,13 @@ context('/api/marks/highlight', () => {
   })
 
   it('the button should toggle the selected text highlighted', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
       .type('{selectall}')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')

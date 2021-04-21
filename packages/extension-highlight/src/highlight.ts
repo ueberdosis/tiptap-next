@@ -8,18 +8,35 @@ import {
 
 export interface HighlightOptions {
   multicolor: boolean,
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    highlight: {
+      /**
+       * Set a highlight mark
+       */
+      setHighlight: (attributes?: { color: string }) => Command,
+      /**
+       * Toggle a highlight mark
+       */
+      toggleHighlight: (attributes?: { color: string }) => Command,
+      /**
+       * Unset a highlight mark
+       */
+      unsetHighlight: () => Command,
+    }
+  }
 }
 
 export const inputRegex = /(?:^|\s)((?:==)((?:[^~]+))(?:==))$/gm
 export const pasteRegex = /(?:^|\s)((?:==)((?:[^~]+))(?:==))/gm
 
-export const Highlight = Mark.create({
+export const Highlight = Mark.create<HighlightOptions>({
   name: 'highlight',
 
-  defaultOptions: <HighlightOptions>{
+  defaultOptions: {
     multicolor: false,
     HTMLAttributes: {},
   },
@@ -65,22 +82,13 @@ export const Highlight = Mark.create({
 
   addCommands() {
     return {
-      /**
-       * Set a highlight mark
-       */
-      setHighlight: (attributes?: { color: string }): Command => ({ commands }) => {
+      setHighlight: attributes => ({ commands }) => {
         return commands.setMark('highlight', attributes)
       },
-      /**
-       * Toggle a highlight mark
-       */
-      toggleHighlight: (attributes?: { color: string }): Command => ({ commands }) => {
+      toggleHighlight: attributes => ({ commands }) => {
         return commands.toggleMark('highlight', attributes)
       },
-      /**
-       * Unset a highlight mark
-       */
-      unsetHighlight: (): Command => ({ commands }) => {
+      unsetHighlight: () => ({ commands }) => {
         return commands.unsetMark('highlight')
       },
     }
@@ -104,9 +112,3 @@ export const Highlight = Mark.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Highlight: typeof Highlight,
-  }
-}

@@ -1,15 +1,26 @@
 import { Command, Node, mergeAttributes } from '@tiptap/core'
 
 export interface ParagraphOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
-export const Paragraph = Node.create({
+declare module '@tiptap/core' {
+  interface Commands {
+    paragraph: {
+      /**
+       * Toggle a paragraph
+       */
+      setParagraph: () => Command,
+    }
+  }
+}
+
+export const Paragraph = Node.create<ParagraphOptions>({
   name: 'paragraph',
 
-  defaultOptions: <ParagraphOptions>{
+  priority: 1000,
+
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -29,10 +40,7 @@ export const Paragraph = Node.create({
 
   addCommands() {
     return {
-      /**
-       * Toggle a paragraph
-       */
-      setParagraph: (): Command => ({ commands }) => {
+      setParagraph: () => ({ commands }) => {
         return commands.toggleNode('paragraph', 'paragraph')
       },
     }
@@ -44,9 +52,3 @@ export const Paragraph = Node.create({
     }
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Paragraph: typeof Paragraph,
-  }
-}

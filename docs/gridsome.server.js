@@ -1,54 +1,8 @@
 const path = require('path')
 const globby = require('globby')
-// const TypeDoc = require('typedoc')
+const { createDefaultOpenGraphImage, createSpecificOpenGraphImage } = require('./utilities/opengraph-images')
 
-// const packages = globby.sync('../packages/*', { onlyDirectories: true })
-//   .map(name => name.replace('../packages/', ''))
-//   .filter(name => name.startsWith('core'))
-//   .map(name => {
-//     const app = new TypeDoc.Application()
-
-//     app.options.addReader(new TypeDoc.TSConfigReader())
-//     app.options.addReader(new TypeDoc.TypeDocReader())
-//     app.bootstrap({
-//       mode: 'file',
-//       ignoreCompilerErrors: true,
-//       experimentalDecorators: true,
-//       excludeExternals: true,
-//       excludeNotExported: true,
-//       excludeProtected: true,
-//       excludePrivate: true,
-//       // excludeNotDocumented: true,
-//       exclude: [
-//         '**/*.test.ts',
-//         '**/__tests__/*',
-//         '**/__mocks__/*',
-//       ],
-//     })
-
-//     const project = app.convert(app.expandInputFiles([`../packages/${name}`]))
-
-//     if (project) {
-//       // app.generateDocs(project, `api/${name}`)
-//       // app.generateJson(project, `api/${name}.json`)
-//       const json = app.serializer.projectToObject(project)
-//       return json
-//     }
-
-//     return null
-//   })
-//   .filter(package => !!package)
-
-// const packages = globby.sync('../packages/*', { onlyDirectories: true })
-//   .map(name => name.replace('../packages/', ''))
-//   .map(name => {
-//     // config.resolve.alias
-//     // .set(`@tiptap/${name}`, path.resolve(`../packages/${name}/index.ts`))
-//     return {
-//       name: `@tiptap/${name}`,
-//       module: require(`../packages/${name}/index.ts`),
-//     }
-//   })
+createDefaultOpenGraphImage('The headless editor framework for web artisans.', 'static/images/og-image.png')
 
 module.exports = function (api) {
 
@@ -56,42 +10,54 @@ module.exports = function (api) {
     cwd: process.cwd(),
   })
 
-  api.loadSource(({ addCollection }) => {
-    const appCollection = addCollection({ typeName: 'Package' })
+  let numberOfPages = 0
+  let numberOfDemos = 0
 
-    // packages.forEach(package => {
-    //   appCollection.addNode(package)
-    // })
+  api.loadSource(() => {
+    /**
+     * Generate pages for all demo components for testing purposes
+     */
+    const demos = []
 
-    globby.sync('../packages/*', { onlyDirectories: true })
-      .map(name => name.replace('../packages/', ''))
-      .forEach(name => {
-        appCollection.addNode({ name })
-        // config.resolve.alias
-        // .set(`@tiptap/${name}`, path.resolve(`../packages/${name}/index.ts`))
-        // appCollection.addNode({
-        //   name: `@tiptap/${name}`,
-        //   module: require(`../packages/${name}/index.ts`),
-        // })
+    globby.sync('./src/demos/**/index.(vue|jsx)').forEach(file => {
+      const match = file.match(
+        new RegExp(/\.\/src\/demos\/([\S]+)\/index.(vue|jsx)/i),
+      )
+
+      if (!match) {
+        return
+      }
+
+      demos.push(match[1])
+    })
+
+    numberOfDemos = demos.length
+
+    api.createPages(({ createPage }) => {
+      createPage({
+        path: '/demos',
+        component: './src/templates/DemoPages/index.vue',
+        context: {
+          demos,
+        },
       })
 
+      demos.forEach(name => {
+        createPage({
+          path: `/demos/${name}`,
+          component: './src/templates/DemoPage/index.vue',
+          context: {
+            name,
+          },
+        })
+      })
+    })
   })
-
-  // api.createPages(({ createPage }) => {
-  //   packages.forEach(package => {
-  //     createPage({
-  //       path: `/api/${package.name}`,
-  //       component: './src/templates/ApiPage/index.vue',
-  //       context: {
-  //         package,
-  //       },
-  //     })
-  //   })
-  // })
 
   api.chainWebpack(config => {
     config.resolve.extensions
       .add('.ts')
+      .add('.tsx')
       .add('.jsx')
 
     config.module
@@ -113,5 +79,19 @@ module.exports = function (api) {
         config.resolve.alias
           .set(`@tiptap/${name}`, path.resolve(`../packages/${name}/src/index.ts`))
       })
+  })
+
+  api.onCreateNode(options => {
+    if (options.internal.typeName === 'DocPage') {
+      numberOfPages += 1
+
+      if (process.env.NODE_ENV === 'production') {
+        createSpecificOpenGraphImage(options.title, options.content, `static/images${options.path}og-image.png`)
+      }
+    }
+  })
+
+  api.configureServer(() => {
+    console.log(`[STATS] ${numberOfPages} pages, ${numberOfDemos} interactive demos`)
   })
 }

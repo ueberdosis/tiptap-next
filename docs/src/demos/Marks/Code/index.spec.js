@@ -1,12 +1,12 @@
-context('/api/marks/code', () => {
+context('/demos/Marks/Code', () => {
   before(() => {
-    cy.visit('/api/marks/code')
+    cy.visit('/demos/Marks/Code')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -21,7 +21,7 @@ context('/api/marks/code', () => {
   })
 
   it('should mark the selected text as inline code', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -30,13 +30,13 @@ context('/api/marks/code', () => {
   })
 
   it('should toggle the selected text as inline code', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
       .type('{selectall}')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror code')

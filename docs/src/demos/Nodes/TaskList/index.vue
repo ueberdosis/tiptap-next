@@ -1,6 +1,6 @@
 <template>
   <div v-if="editor">
-    <button @click="editor.chain().focus().toggleTaskList().run()" :class="{ 'is-active': editor.isActive('task_list') }">
+    <button @click="editor.chain().focus().toggleTaskList().run()" :class="{ 'is-active': editor.isActive('taskList') }">
       task list
     </button>
 
@@ -9,8 +9,7 @@
 </template>
 
 <script>
-import { Editor } from '@tiptap/core'
-import { EditorContent } from '@tiptap/vue'
+import { Editor, EditorContent } from '@tiptap/vue-2'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -61,7 +60,7 @@ ul[data-type="taskList"] {
     display: flex;
     align-items: center;
 
-    > input {
+    > label {
       flex: 0 0 auto;
       margin-right: 0.5rem;
     }

@@ -1,12 +1,12 @@
-context('/api/nodes/task-list', () => {
+context('/demos/Nodes/TaskList', () => {
   before(() => {
-    cy.visit('/api/nodes/task-list')
+    cy.visit('/demos/Nodes/TaskList')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -31,7 +31,7 @@ context('/api/nodes/task-list', () => {
     cy.get('.ProseMirror ul li')
       .should('not.exist')
 
-    cy.get('.demo__preview button:nth-child(1)')
+    cy.get('button:nth-child(1)')
       .click()
 
     cy.get('.ProseMirror')
@@ -47,14 +47,14 @@ context('/api/nodes/task-list', () => {
     cy.get('.ProseMirror ul')
       .should('not.exist')
 
-    cy.get('.demo__preview button:nth-child(1)')
+    cy.get('button:nth-child(1)')
       .click()
 
     cy.get('.ProseMirror')
       .find('ul[data-type="taskList"]')
       .should('contain', 'Example Text')
 
-    cy.get('.demo__preview button:nth-child(1)')
+    cy.get('button:nth-child(1)')
       .click()
 
     cy.get('.ProseMirror ul')
@@ -63,7 +63,7 @@ context('/api/nodes/task-list', () => {
 
   it('should make the paragraph a task list when the keyboard shortcut is pressed', () => {
     cy.get('.ProseMirror')
-      .trigger('keydown', { modKey: true, shiftKey: true, key: 'l' })
+      .trigger('keydown', { modKey: true, shiftKey: true, key: '9' })
       .find('ul li')
       .should('contain', 'Example Text')
   })
@@ -121,6 +121,6 @@ context('/api/nodes/task-list', () => {
     cy.get('.ProseMirror')
       .find('li:nth-child(2)')
       .should('contain', 'List Item 2')
-      .should('have.attr', 'data-checked', 'true')
+      .should('have.attr', 'data-checked', 'false')
   })
 })

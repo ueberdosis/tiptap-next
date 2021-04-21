@@ -1,12 +1,12 @@
-context('/api/marks/underline', () => {
+context('/demos/Marks/Underline', () => {
   before(() => {
-    cy.visit('/api/marks/underline')
+    cy.visit('/demos/Marks/Underline')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -25,7 +25,7 @@ context('/api/marks/underline', () => {
   })
 
   it('the button should underline the selected text', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -34,13 +34,13 @@ context('/api/marks/underline', () => {
   })
 
   it('the button should toggle the selected text underline', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
       .type('{selectall}')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')

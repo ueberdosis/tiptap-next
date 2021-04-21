@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import { Editor, EditorContent, defaultExtensions } from '@tiptap/vue-starter-kit'
+import { Editor, EditorContent } from '@tiptap/vue-2'
+import { defaultExtensions } from '@tiptap/starter-kit'
 import Highlight from '@tiptap/extension-highlight'
 import Typography from '@tiptap/extension-typography'
 
@@ -36,7 +37,7 @@ export default {
           You can overwrite existing input rules or add your own to nodes, marks and extensions.
         </p>
         <p>
-          For example, we added the <code>Typography</code> extensions here. Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
+          For example, we added the <code>Typography</code> extension here. Try typing <code>(c)</code> to see how it’s converted to a proper © character. You can also try <code>-></code>, <code>>></code>, <code>1/2</code>, <code>!=</code>, or <code>--</code>.
         </p>
       `,
       extensions: [
@@ -65,6 +66,15 @@ export default {
     padding: 0 1rem;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
   code {
     background-color: rgba(#616161, 0.1);
     color: #616161;
@@ -79,6 +89,7 @@ export default {
 
     code {
       color: inherit;
+      padding: 0;
       background: none;
       font-size: 0.8rem;
     }
