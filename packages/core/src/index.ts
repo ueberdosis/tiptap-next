@@ -12,6 +12,11 @@ export { default as markPasteRule } from './pasteRules/markPasteRule'
 export { default as callOrReturn } from './utilities/callOrReturn'
 export { default as mergeAttributes } from './utilities/mergeAttributes'
 
+export { default as coordsAtPos } from './helpers/coordsAtPos'
+export { default as getExtensionField } from './helpers/getExtensionField'
+export { default as findChildren } from './helpers/findChildren'
+export { default as findParentNode } from './helpers/findParentNode'
+export { default as findParentNodeClosestToPos } from './helpers/findParentNodeClosestToPos'
 export { default as generateHTML } from './helpers/generateHTML'
 export { default as getSchema } from './helpers/getSchema'
 export { default as getHTMLFromFragment } from './helpers/getHTMLFromFragment'
@@ -22,7 +27,7 @@ export { default as isNodeActive } from './helpers/isNodeActive'
 export { default as isNodeEmpty } from './helpers/isNodeEmpty'
 export { default as isNodeSelection } from './helpers/isNodeSelection'
 export { default as isTextSelection } from './helpers/isTextSelection'
-export { default as findParentNodeClosestToPos } from './helpers/findParentNodeClosestToPos'
+export { default as posToDOMRect } from './helpers/posToDOMRect'
 
 export interface Commands {}
 

@@ -27,11 +27,6 @@ npm uninstall tiptap tiptap-commands tiptap-extensions tiptap-utils
 yarn remove tiptap tiptap-commands tiptap-extensions tiptap-utils
 ```
 
-### Upgrade to Vue.js 3
-:::warning Work in progress
-We’re [waiting for Gridsome](https://github.com/gridsome/gridsome/issues/1289) to be compatible with Vue.js 3.
-:::
-
 ### Explicitly register the Document, Text and Paragraph extensions
 tiptap 1 tried to hide a few required extensions from you with the default setting `useBuiltInExtensions: true`. That setting has been removed and you’re required to import all extensions. Be sure to explicitly import at least the [`Document`](/api/nodes/document), [`Paragraph`](/api/nodes/paragraph) and [`Text`](/api/nodes/text) extensions.
 
@@ -46,7 +41,7 @@ new Editor({
     Paragraph,
     Text,
     // all your other extensions
-  ]
+  ],
 })
 ```
 
@@ -110,7 +105,7 @@ const CustomExtension = Node.create({
 })
 ```
 
-Read more about [all the nifty details building custom extensions](/guide/build-extensions) in our guide.
+Read more about [all the nifty details building custom extensions](/guide/custom-extensions) in our guide.
 
 ### Renamed settings and methods
 [We renamed a lot of settings and methods](/api/editor). Hopefully you can migrate to the new API with search & replace. Here is a list of what changed:
@@ -143,6 +138,9 @@ All new extensions come with specific commands to set, unset and toggle styles. 
 | ~~`.underline()`~~       | `.toggleUnderline()`            |
 | …                        | …                               |
 
+### MenuBar, BubbleMenu and FloatingMenu
+Read the dedicated [guide on creating menus](/guide/menus) to migrate your menus.
+
 ### Commands can be chained now
 Most commands can be combined to one call now. That’s shorter than separate function calls in most cases. Here is an example to make the selected text bold:
 
@@ -168,6 +166,9 @@ The new event callbacks have fewer parameters. The same things should be availab
 The reference implementation for collaborative editing uses Y.js now. That’s a whole different thing. You still can use the tiptap 1 extension, but it’s up to you to adapt it to the new extension API. If you’ve done this, don’t forget to share it with us so we can link to it from here!
 
 Read more about [the new collaborative editing experience](/guide/collaborative-editing) in our guide.
+
+### Marks don’t support node view anymore
+For marks, node views are [not well supported in ProseMirror](https://discuss.prosemirror.net/t/there-is-a-bug-in-marks-nodeview/2722/2). There is also [a related issue](https://github.com/ueberdosis/tiptap/issues/613) for tiptap 1. That’s why we removed it in tiptap 2.
 
 ### Become a sponsor
 tiptap wouldn’t exist without the funding of its community. If you fell in love with tiptap, don’t forget to [become a sponsor](/sponsor) and make the maintenance, development and support sustainable.

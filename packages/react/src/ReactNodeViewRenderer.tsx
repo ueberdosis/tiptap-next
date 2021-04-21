@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
   NodeView,
   NodeViewProps,
@@ -20,6 +20,8 @@ class ReactNodeView extends NodeView<React.FunctionComponent, Editor> {
 
   renderer!: ReactRenderer
 
+  contentDOMElement!: Element | null
+
   mount() {
     const props: NodeViewProps = {
       editor: this.editor,
@@ -36,26 +38,15 @@ class ReactNodeView extends NodeView<React.FunctionComponent, Editor> {
         return string.charAt(0).toUpperCase() + string.substring(1)
       }
 
-      // @ts-ignore
-      this.component.displayName = capitalizeFirstChar(this.extension.config.name)
+      this.component.displayName = capitalizeFirstChar(this.extension.name)
     }
 
     const ReactNodeViewProvider: React.FunctionComponent = componentProps => {
-      const [isEditable, setIsEditable] = useState(this.editor.isEditable)
       const onDragStart = this.onDragStart.bind(this)
-      const onViewUpdate = () => setIsEditable(this.editor.isEditable)
       const Component = this.component
 
-      useEffect(() => {
-        this.editor.on('viewUpdate', onViewUpdate)
-
-        return () => {
-          this.editor.off('viewUpdate', onViewUpdate)
-        }
-      }, [])
-
       return (
-        <ReactNodeViewContext.Provider value={{ onDragStart, isEditable }}>
+        <ReactNodeViewContext.Provider value={{ onDragStart }}>
           <Component {...componentProps} />
         </ReactNodeViewContext.Provider>
       )
@@ -63,15 +54,25 @@ class ReactNodeView extends NodeView<React.FunctionComponent, Editor> {
 
     ReactNodeViewProvider.displayName = 'ReactNodeView'
 
+    this.contentDOMElement = this.node.isLeaf
+      ? null
+      : document.createElement(this.node.isInline ? 'span' : 'div')
+
     this.renderer = new ReactRenderer(ReactNodeViewProvider, {
       editor: this.editor,
       props,
+      as: this.node.isInline
+        ? 'span'
+        : 'div',
     })
   }
 
   get dom() {
-    if (!this.renderer.element.firstElementChild?.hasAttribute('data-node-view-wrapper')) {
-      throw Error('Please use the ReactViewWrapper component for your node view.')
+    if (
+      this.renderer.element.firstElementChild
+      && !this.renderer.element.firstElementChild?.hasAttribute('data-node-view-wrapper')
+    ) {
+      throw Error('Please use the NodeViewWrapper component for your node view.')
     }
 
     return this.renderer.element
@@ -84,7 +85,15 @@ class ReactNodeView extends NodeView<React.FunctionComponent, Editor> {
 
     const contentElement = this.dom.querySelector('[data-node-view-content]')
 
-    return contentElement || this.dom
+    if (
+      this.contentDOMElement
+      && contentElement
+      && !contentElement.contains(this.contentDOMElement)
+    ) {
+      contentElement.appendChild(this.contentDOMElement)
+    }
+
+    return this.contentDOMElement
   }
 
   update(node: ProseMirrorNode, decorations: Decoration[]) {
@@ -121,6 +130,7 @@ class ReactNodeView extends NodeView<React.FunctionComponent, Editor> {
 
   destroy() {
     this.renderer.destroy()
+    this.contentDOMElement = null
   }
 }
 

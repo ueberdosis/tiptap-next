@@ -1,3 +1,7 @@
+---
+title: Vue.js 3 WYSIWYG
+---
+
 # Vue.js 3
 
 ## toc
@@ -8,7 +12,7 @@ The following guide describes how to integrate tiptap with your [Vue](https://vu
 ## Requirements
 * [Node](https://nodejs.org/en/download/) installed on your machine
 * [Vue CLI](https://cli.vuejs.org/) installed on your machine
-* Experience with [Vue](https://vuejs.org/v2/guide/#Getting-Started)
+* Experience with [Vue](https://v3.vuejs.org/guide/introduction.html)
 
 ## 1. Create a project (optional)
 If you already have an existing Vue project, that’s fine too. Just skip this step and proceed with the next step.
@@ -125,7 +129,7 @@ export default {
 </script>
 ```
 
-You should now see tiptap in your browser. You’ve successfully set up tiptap! Time to give yourself a pat on the back.
+You should now see tiptap in your browser. Time to give yourself a pat on the back! :)
 
 ## 5. Use v-model (optional)
 You’re probably used to bind your data with `v-model` in forms, that’s also possible with tiptap. Here is how that would work with tiptap:

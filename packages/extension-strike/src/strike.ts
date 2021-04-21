@@ -7,9 +7,7 @@ import {
 } from '@tiptap/core'
 
 export interface StrikeOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
 declare module '@tiptap/core' {
@@ -53,7 +51,9 @@ export const Strike = Mark.create<StrikeOptions>({
         tag: 'strike',
       },
       {
-        style: 'text-decoration=line-through',
+        style: 'text-decoration',
+        consuming: false,
+        getAttrs: style => ((style as string).includes('line-through') ? {} : false),
       },
     ]
   },

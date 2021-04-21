@@ -31,6 +31,26 @@ In the example above two different commands are executed at once. When a user cl
 
 All chained commands are kind of queued up. They are combined to one single transaction. That means, the content is only updated once, also the `update` event is only triggered once.
 
+#### Chaining inside custom commands
+When chaining a command, the transaction is held back. If you want to chain commands inside your custom commands, you’ll need to use said transaction and add to it. Here is how you would do that:
+
+```js
+addCommands() {
+  return {
+    customCommand: attributes => ({ chain }) => {
+      // Doesn’t work:
+      // return editor.chain() …
+
+      // Does work:
+      return chain()
+        .insertContent('foo!')
+        .insertContent('bar!')
+        .run()
+    },
+  }
+}
+```
+
 ### Inline commands
 In some cases, it’s helpful to put some more logic in a command. That’s why you can execute commands in commands. I know, that sounds crazy, but let’s look at an example:
 
@@ -71,10 +91,10 @@ Both calls would return `true` if it’s possible to apply the commands, and `fa
 
 In order to make that work with your custom commands, don’t forget to return `true` or `false`.
 
-For some of your own commands, you probably want to work with the raw [transaction](/api/concept). To make them work with `.can()` you should check if the transaction should be dispatched. Here is how we do that within `.insertText()`:
+For some of your own commands, you probably want to work with the raw [transaction](/api/concept). To make them work with `.can()` you should check if the transaction should be dispatched. Here is how you can create a simple `.insertText()` command:
 
 ```js
-export default (value: string): Command => ({ tr, dispatch }) => {
+export default (value) => ({ tr, dispatch }) => {
   if (dispatch) {
     tr.insertText(value)
   }
@@ -86,18 +106,22 @@ export default (value: string): Command => ({ tr, dispatch }) => {
 If you’re just wrapping another tiptap command, you don’t need to check that, we’ll do it for you.
 
 ```js
-bold: (): Command => ({ commands }) => {
-  return commands.toggleMark('bold')
-},
+addCommands() {
+  return {
+    bold: () => ({ commands }) => {
+      return commands.toggleMark('bold')
+    },
+  }
+}
 ```
 
-If you’re just wrapping a ProseMirror command, you’ll need to pass `dispatch` anyway. Then there’s also no need to check it:
+If you’re just wrapping a plain ProseMirror command, you’ll need to pass `dispatch` anyway. Then there’s also no need to check it:
 
 ```js
-export default (typeOrName: string | NodeType): Command => ({ state, dispatch }) => {
-  const type = getNodeType(typeOrName, state.schema)
+import { exitCode } from 'prosemirror-commands'
 
-  return liftListItem(type)(state, dispatch)
+export default () => ({ state, dispatch }) => {
+  return exitCode(state, dispatch)
 }
 ```
 
@@ -117,74 +141,74 @@ editor.first(({ commands }) => [
 Inside of commands you can do the same thing like that:
 
 ```js
-commands.first([
-  () => commands.undoInputRule(),
-  () => commands.deleteSelection(),
-  // …
-])
+export default () => ({ commands }) => {
+  return commands.first([
+    () => commands.undoInputRule(),
+    () => commands.deleteSelection(),
+    // …
+  ])
+}
 ```
 
 ## List of commands
 Have a look at all of the core commands listed below. They should give you a good first impression of what’s possible.
 
 ### Content
-| Command         | Description                                      |
-| --------------- | ------------------------------------------------ |
-| .clearContent() | Clear the whole document.                        |
-| .insertHTML()   | Insert a string of HTML at the current position. |
-| .insertText()   | Insert a string of text at the current position. |
-| .setContent()   | Replace the whole document with new content.     |
+| Command          | Description                                              | Links                                |
+| ---------------- | -------------------------------------------------------- | ------------------------------------ |
+| .clearContent()  | Clear the whole document.                                | [More](/api/commands/clear-content)  |
+| .insertContent() | Insert a node or string of HTML at the current position. | [More](/api/commands/insert-content) |
+| .setContent()    | Replace the whole document with new content.             | [More](/api/commands/set-content)    |
 
 ### Nodes & Marks
-| Command                 | Description                                               |
-| ----------------------- | --------------------------------------------------------- |
-| .clearNodes()           | Normalize nodes to a simple paragraph.                    |
-| .createParagraphNear()  | Create a paragraph nearby.                                |
-| .exitCode()             | Exit from a code block.                                   |
-| .extendMarkRange()      | Extends the text selection to the current mark.           |
-| .joinBackward()         | Join two nodes backward.                                  |
-| .joinForward()          | Join two nodes forward.                                   |
-| .lift()                 | Removes an existing wrap.                                 |
-| .liftEmptyBlock()       | Lift block if empty.                                      |
-| .newlineInCode()        | Add a newline character in code.                          |
-| .replace()              | Replaces text with a node.                                |
-| .replaceRange()         | Replaces text with a node within a range.                 |
-| .resetNodeAttributes()  | Resets all node attributes to the default value.          |
-| .selectParentNode()     | Select the parent node.                                   |
-| .setMark()              | Add a mark with new attributes.                           |
-| .setNode()              | Replace a given range with a node.                        |
-| .splitBlock()           | Forks a new node from an existing node.                   |
-| .toggleMark()           | Toggle a mark on and off.                                 |
-| .toggleNode()           | Toggle a node with another node.                          |
-| .toggleWrap()           | Wraps nodes in another node, or removes an existing wrap. |
-| .undoInputRule()        | Undo an input rule.                                       |
-| .unsetAllMarks()        | Remove all marks in the current selection.                |
-| .unsetMark()            | Remove a mark in the current selection.                   |
-| .updateNodeAttributes() | Update attributes of a node.                              |
+| Command                 | Description                                               | Links                                |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------ |
+| .clearNodes()           | Normalize nodes to a simple paragraph.                    | [More](/api/commands/clear-nodes)  |
+| .createParagraphNear()  | Create a paragraph nearby.                                | [More](/api/commands/create-paragraph-near)  |
+| .extendMarkRange()      | Extends the text selection to the current mark.           | [More](/api/commands/extend-mark-range)  |
+| .exitCode()             | Exit from a code block.                                   | [More](/api/commands/exit-code)  |
+| .joinBackward()         | Join two nodes backward.                                  | [More](/api/commands/join-backward)  |
+| .joinForward()          | Join two nodes forward.                                   | [More](/api/commands/join-forward)  |
+| .lift()                 | Removes an existing wrap.                                 | [More](/api/commands/lift)  |
+| .liftEmptyBlock()       | Lift block if empty.                                      | [More](/api/commands/lift-empty-block)  |
+| .newlineInCode()        | Add a newline character in code.                          | [More](/api/commands/newline-in-code)  |
+| .replace()              | Replaces text with a node.                                | [More](/api/commands/replace)  |
+| .replaceRange()         | Replaces text with a node within a range.                 | [More](/api/commands/replace-range)  |
+| .resetAttributes()      | Resets some node or mark attributes to the default value. | [More](/api/commands/reset-attributes)  |
+| .setMark()              | Add a mark with new attributes.                           | [More](/api/commands/set-mark)  |
+| .setNode()              | Replace a given range with a node.                        | [More](/api/commands/set-node)  |
+| .splitBlock()           | Forks a new node from an existing node.                   | [More](/api/commands/split-block)  |
+| .toggleMark()           | Toggle a mark on and off.                                 | [More](/api/commands/toggle-mark)  |
+| .toggleNode()           | Toggle a node with another node.                          | [More](/api/commands/toggle-node)  |
+| .toggleWrap()           | Wraps nodes in another node, or removes an existing wrap. | [More](/api/commands/toggle-wrap)  |
+| .undoInputRule()        | Undo an input rule.                                       | [More](/api/commands/undo-input-rule)  |
+| .unsetAllMarks()        | Remove all marks in the current selection.                | [More](/api/commands/unset-all-marks)  |
+| .unsetMark()            | Remove a mark in the current selection.                   | [More](/api/commands/unset-mark)  |
+| .updateAttributes()     | Update attributes of a node or mark.                      | [More](/api/commands/update-attributes)  |
 
 ### Lists
-| Command          | Description                                 |
-| ---------------- | ------------------------------------------- |
-| .liftListItem()  | Lift the list item into a wrapping list.    |
-| .sinkListItem()  | Sink the list item down into an inner list. |
-| .splitListItem() | Splits one list item into two list items.   |
-| .toggleList()    | Toggle between different list types.        |
-| .wrapInList()    | Wrap a node in a list.                      |
+| Command          | Description                                 | Links                                |
+| ---------------- | ------------------------------------------- | ------------------------------------ |
+| .liftListItem()  | Lift the list item into a wrapping list.    | [More](/api/commands/lift-list-item)  |
+| .sinkListItem()  | Sink the list item down into an inner list. | [More](/api/commands/sink-list-item)  |
+| .splitListItem() | Splits one list item into two list items.   | [More](/api/commands/split-list-item)  |
+| .toggleList()    | Toggle between different list types.        | [More](/api/commands/toggle-list)  |
+| .wrapInList()    | Wrap a node in a list.                      | [More](/api/commands/wrap-in-list)  |
 
 ### Selection
-| Command               | Description                             |
-| --------------------- | --------------------------------------- |
-| .blur()               | Removes focus from the editor.          |
-| .deleteRange()        | Delete a given range.                   |
-| .deleteSelection()    | Delete the selection, if there is one.  |
-| .enter()              | Trigger enter.                          |
-| .focus()              | Focus the editor at the given position. |
-| .keyboardShortcut()   | Trigger a keyboard shortcut.            |
-| .scrollIntoView()     | Scroll the selection into view.         |
-| .selectAll()          | Select the whole document.              |
-| .selectNodeBackward() | Select a node backward.                 |
-| .selectNodeForward()  | Select a node forward.                  |
-| .selectParentNode()   | Select the parent node.                 |
+| Command               | Description                             | Links                                |
+| --------------------- | --------------------------------------- | ------------------------------------ |
+| .blur()               | Removes focus from the editor.          | [More](/api/commands/blur)  |
+| .deleteRange()        | Delete a given range.                   | [More](/api/commands/delete-range)  |
+| .deleteSelection()    | Delete the selection, if there is one.  | [More](/api/commands/delete-selection)  |
+| .enter()              | Trigger enter.                          | [More](/api/commands/enter)  |
+| .focus()              | Focus the editor at the given position. | [More](/api/commands/focus)  |
+| .keyboardShortcut()   | Trigger a keyboard shortcut.            | [More](/api/commands/keyboard-shortcut)  |
+| .scrollIntoView()     | Scroll the selection into view.         | [More](/api/commands/scroll-into-view)  |
+| .selectAll()          | Select the whole document.              | [More](/api/commands/select-all)  |
+| .selectNodeBackward() | Select a node backward.                 | [More](/api/commands/select-node-backward)  |
+| .selectNodeForward()  | Select a node forward.                  | [More](/api/commands/select-node-forward)  |
+| .selectParentNode()   | Select the parent node.                 | [More](/api/commands/select-parent-node)  |
 
 <!-- ## Example use cases
 
@@ -199,17 +223,45 @@ this.editor
   .chain()
   .focus()
   .createParagraphNear()
-  .insertText(text)
+  .insertContent(text)
   .setBlockquote()
-  .insertHTML('<p></p>')
+  .insertContent('<p></p>')
   .createParagraphNear()
   .unsetBlockquote()
   .createParagraphNear()
-  .insertHTML('<p></p>')
+  .insertContent('<p></p>')
   .run()
-``` -->
+```
 
-## Add your own commands
+Add a custom command to insert a node.
+```js
+addCommands() {
+  return {
+    insertTimecode: attributes => ({ chain }) => {
+      return chain()
+        .focus()
+        .insertContent({
+          type: 'heading',
+          attrs: {
+            level: 2,
+          },
+          content: [
+            {
+              type: 'text',
+              text: 'heading',
+            },
+          ],
+        })
+        .insertText(' ')
+        .run();
+    },
+  }
+},
+```
+-->
+
+## Add custom commands
 All extensions can add additional commands (and most do), check out the specific [documentation for the provided nodes](/api/nodes), [marks](/api/marks), and [extensions](/api/extensions) to learn more about those.
 
-Of course, you can [add your custom extensions](/guide/build-extensions) with custom commands aswell.
+Of course, you can [add your custom extensions](/guide/custom-extensions) with custom commands aswell.
+

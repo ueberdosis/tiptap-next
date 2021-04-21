@@ -1,5 +1,5 @@
 <template>
-  <div style="position: relative">
+  <div>
     <bubble-menu :editor="editor" v-if="editor">
       <button @click="editor.chain().focus().toggleBold().run()" :class="{ 'is-active': editor.isActive('bold') }">
         bold
@@ -7,8 +7,8 @@
       <button @click="editor.chain().focus().toggleItalic().run()" :class="{ 'is-active': editor.isActive('italic') }">
         italic
       </button>
-      <button @click="editor.chain().focus().toggleCode().run()" :class="{ 'is-active': editor.isActive('code') }">
-        code
+      <button @click="editor.chain().focus().toggleStrike().run()" :class="{ 'is-active': editor.isActive('strike') }">
+        strike
       </button>
     </bubble-menu>
     <editor-content :editor="editor" />
@@ -38,7 +38,7 @@ export default {
       ],
       content: `
         <p>
-          Hey, try to select some text here. There will popup a menu for selecting some inline styles. Remember: you have full control about content and styling of this menu.
+          Hey, try to select some text here. You’ll see a formatting menu pop up. And as always, you are in full control about content and styling of this menu.
         </p>
       `,
     })

@@ -1,8 +1,9 @@
 import {
-  Command,
   Node,
+  Command,
+  ParentConfig,
   mergeAttributes,
-  findParentNodeClosestToPos,
+  getExtensionField,
   callOrReturn,
 } from '@tiptap/core'
 import {
@@ -27,13 +28,11 @@ import {
 import { NodeView } from 'prosemirror-view'
 import { TextSelection } from 'prosemirror-state'
 import { createTable } from './utilities/createTable'
-import { isCellSelection } from './utilities/isCellSelection'
+import { deleteTableWhenAllCellsSelected } from './utilities/deleteTableWhenAllCellsSelected'
 import { TableView } from './TableView'
 
 export interface TableOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
   resizable: boolean,
   handleWidth: number,
   cellMinWidth: number,
@@ -70,7 +69,11 @@ declare module '@tiptap/core' {
     /**
      * Table Role
      */
-    tableRole?: string | ((this: { options: Options }) => string),
+    tableRole?: string | ((this: {
+      name: string,
+      options: Options,
+      parent: ParentConfig<NodeConfig<Options>>['tableRole'],
+    }) => string),
   }
 }
 
@@ -185,39 +188,6 @@ export const Table = Node.create<TableOptions>({
   },
 
   addKeyboardShortcuts() {
-    const deleteTableWhenAllCellsSelected = () => {
-      const { selection } = this.editor.state
-
-      if (!isCellSelection(selection)) {
-        return false
-      }
-
-      let cellCount = 0
-      const table = findParentNodeClosestToPos(selection.ranges[0].$from, node => {
-        return node.type.name === 'table'
-      })
-
-      table?.node.descendants(node => {
-        if (node.type.name === 'table') {
-          return false
-        }
-
-        if (['tableCell', 'tableHeader'].includes(node.type.name)) {
-          cellCount += 1
-        }
-      })
-
-      const allCellsSelected = cellCount === selection.ranges.length
-
-      if (!allCellsSelected) {
-        return false
-      }
-
-      this.editor.commands.deleteTable()
-
-      return true
-    }
-
     return {
       Tab: () => {
         if (this.editor.commands.goToNextCell()) {
@@ -259,10 +229,13 @@ export const Table = Node.create<TableOptions>({
   },
 
   extendNodeSchema(extension) {
-    const context = { options: extension.options }
+    const context = {
+      name: extension.name,
+      options: extension.options,
+    }
 
     return {
-      tableRole: callOrReturn(extension.config.tableRole, context),
+      tableRole: callOrReturn(getExtensionField(extension, 'tableRole', context)),
     }
   },
 })

@@ -1,4 +1,4 @@
-# Configure the editor
+# Configuration
 
 ## toc
 
@@ -127,7 +127,7 @@ import { Editor, defaultExtensions } from '@tiptap/starter-kit'
 
 new Editor({
   extensions: [
-    ...defaultExtensions().filter(extension => extension.config.name !== 'history'),
+    ...defaultExtensions().filter(extension => extension.name !== 'history'),
   ],
 })
 ```

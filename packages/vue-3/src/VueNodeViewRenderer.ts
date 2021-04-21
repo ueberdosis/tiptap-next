@@ -6,6 +6,7 @@ import {
 } from '@tiptap/core'
 import {
   ref,
+  Ref,
   provide,
   PropType,
   Component,
@@ -56,6 +57,8 @@ class VueNodeView extends NodeView<Component, Editor> {
 
   renderer!: VueRenderer
 
+  decorationClasses!: Ref<string>
+
   mount() {
     const props: NodeViewProps = {
       editor: this.editor,
@@ -68,18 +71,15 @@ class VueNodeView extends NodeView<Component, Editor> {
     }
 
     const onDragStart = this.onDragStart.bind(this)
-    const isEditable = ref(this.editor.isEditable)
 
-    this.editor.on('viewUpdate', () => {
-      isEditable.value = this.editor.isEditable
-    })
+    this.decorationClasses = ref(this.getDecorationClasses())
 
     const extendedComponent = defineComponent({
       extends: { ...this.component },
       props: Object.keys(props),
       setup: () => {
         provide('onDragStart', onDragStart)
-        provide('isEditable', isEditable)
+        provide('decorationClasses', this.decorationClasses)
 
         return (this.component as any).setup?.(props)
       },
@@ -124,6 +124,7 @@ class VueNodeView extends NodeView<Component, Editor> {
 
     this.node = node
     this.decorations = decorations
+    this.decorationClasses.value = this.getDecorationClasses()
     this.renderer.updateProps({ node, decorations })
 
     return true
@@ -139,6 +140,14 @@ class VueNodeView extends NodeView<Component, Editor> {
     this.renderer.updateProps({
       selected: false,
     })
+  }
+
+  getDecorationClasses() {
+    return this.decorations
+      // @ts-ignore
+      .map(item => item.type.attrs.class)
+      .flat()
+      .join(' ')
   }
 
   destroy() {

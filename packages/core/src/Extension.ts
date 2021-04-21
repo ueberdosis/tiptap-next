@@ -1,10 +1,15 @@
 import { Plugin, Transaction } from 'prosemirror-state'
-import { Command as ProseMirrorCommand } from 'prosemirror-commands'
 import { InputRule } from 'prosemirror-inputrules'
 import { Editor } from './Editor'
 import { Node } from './Node'
+import { Mark } from './Mark'
 import mergeDeep from './utilities/mergeDeep'
-import { GlobalAttributes, RawCommands } from './types'
+import {
+  GlobalAttributes,
+  RawCommands,
+  ParentConfig,
+  KeyboardShortcutCommand,
+} from './types'
 import { ExtensionConfig } from '.'
 
 declare module '@tiptap/core' {
@@ -17,6 +22,11 @@ declare module '@tiptap/core' {
     name: string,
 
     /**
+     * Priority
+     */
+    priority?: number,
+
+    /**
      * Default options
      */
     defaultOptions?: Options,
@@ -25,49 +35,61 @@ declare module '@tiptap/core' {
      * Global attributes
      */
     addGlobalAttributes?: (this: {
+      name: string,
       options: Options,
+      parent: ParentConfig<ExtensionConfig<Options>>['addGlobalAttributes'],
     }) => GlobalAttributes | {},
 
     /**
      * Raw
      */
     addCommands?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addCommands'],
     }) => Partial<RawCommands>,
 
     /**
      * Keyboard shortcuts
      */
     addKeyboardShortcuts?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addKeyboardShortcuts'],
     }) => {
-      [key: string]: ProseMirrorCommand,
+      [key: string]: KeyboardShortcutCommand,
     },
 
     /**
      * Input rules
      */
     addInputRules?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addInputRules'],
     }) => InputRule[],
 
     /**
      * Paste rules
      */
     addPasteRules?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addPasteRules'],
     }) => Plugin[],
 
     /**
      * ProseMirror plugins
      */
     addProseMirrorPlugins?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addProseMirrorPlugins'],
     }) => Plugin[],
 
     /**
@@ -75,55 +97,63 @@ declare module '@tiptap/core' {
      */
     extendNodeSchema?: ((
       this: {
+        name: string,
         options: Options,
+        parent: ParentConfig<ExtensionConfig<Options>>['extendNodeSchema'],
       },
       extension: Node,
-    ) => {
-      [key: string]: any,
-    }) | null,
+    ) => Record<string, any>) | null,
 
     /**
      * Extend Mark Schema
      */
     extendMarkSchema?: ((
       this: {
+        name: string,
         options: Options,
+        parent: ParentConfig<ExtensionConfig<Options>>['extendMarkSchema'],
       },
-      extension: Node,
-    ) => {
-      [key: string]: any,
-    }) | null,
+      extension: Mark,
+    ) => Record<string, any>) | null,
+
+    /**
+     * The editor is not ready yet.
+     */
+    onBeforeCreate?: ((this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onBeforeCreate'],
+    }) => void) | null,
 
     /**
      * The editor is ready.
      */
     onCreate?: ((this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onCreate'],
     }) => void) | null,
 
     /**
      * The content has changed.
      */
     onUpdate?: ((this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onUpdate'],
     }) => void) | null,
 
     /**
      * The selection has changed.
      */
     onSelectionUpdate?: ((this: {
+      name: string,
       options: Options,
       editor: Editor,
-    }) => void) | null,
-
-    /**
-     * The view has changed.
-     */
-     onViewUpdate?: ((this: {
-      options: Options,
-      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onSelectionUpdate'],
     }) => void) | null,
 
     /**
@@ -131,8 +161,10 @@ declare module '@tiptap/core' {
      */
     onTransaction?: ((
       this: {
+        name: string,
         options: Options,
         editor: Editor,
+        parent: ParentConfig<ExtensionConfig<Options>>['onTransaction'],
       },
       props: {
         transaction: Transaction,
@@ -144,8 +176,10 @@ declare module '@tiptap/core' {
      */
     onFocus?: ((
       this: {
+        name: string,
         options: Options,
         editor: Editor,
+        parent: ParentConfig<ExtensionConfig<Options>>['onFocus'],
       },
       props: {
         event: FocusEvent,
@@ -157,8 +191,10 @@ declare module '@tiptap/core' {
      */
     onBlur?: ((
       this: {
+        name: string,
         options: Options,
         editor: Editor,
+        parent: ParentConfig<ExtensionConfig<Options>>['onBlur'],
       },
       props: {
         event: FocusEvent,
@@ -169,8 +205,10 @@ declare module '@tiptap/core' {
      * The editor is destroyed.
      */
     onDestroy?: ((this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onDestroy'],
     }) => void) | null,
   }
 }
@@ -178,42 +216,55 @@ declare module '@tiptap/core' {
 export class Extension<Options = any> {
   type = 'extension'
 
+  name = 'extension'
+
+  parent: Extension | null = null
+
+  child: Extension | null = null
+
+  options: Options
+
   config: ExtensionConfig = {
-    name: 'extension',
+    name: this.name,
+    priority: 100,
     defaultOptions: {},
   }
 
-  options!: Options
-
-  constructor(config: ExtensionConfig<Options>) {
+  constructor(config: Partial<ExtensionConfig<Options>> = {}) {
     this.config = {
       ...this.config,
       ...config,
     }
 
+    this.name = this.config.name
     this.options = this.config.defaultOptions
   }
 
-  static create<O>(config: ExtensionConfig<O>) {
+  static create<O>(config: Partial<ExtensionConfig<O>> = {}) {
     return new Extension<O>(config)
   }
 
   configure(options: Partial<Options> = {}) {
-    return Extension
-      .create<Options>(this.config as ExtensionConfig<Options>)
-      .#configure(options)
-  }
-
-  #configure = (options: Partial<Options>) => {
-    this.options = mergeDeep(this.config.defaultOptions, options) as Options
+    this.options = mergeDeep(this.options, options) as Options
 
     return this
   }
 
-  extend<ExtendedOptions = Options>(extendedConfig: Partial<ExtensionConfig<ExtendedOptions>>) {
-    return new Extension<ExtendedOptions>({
-      ...this.config,
-      ...extendedConfig,
-    } as ExtensionConfig<ExtendedOptions>)
+  extend<ExtendedOptions = Options>(extendedConfig: Partial<ExtensionConfig<ExtendedOptions>> = {}) {
+    const extension = new Extension<ExtendedOptions>(extendedConfig)
+
+    extension.parent = this
+
+    this.child = extension
+
+    extension.name = extendedConfig.name
+      ? extendedConfig.name
+      : extension.parent.name
+
+    extension.options = extendedConfig.defaultOptions
+      ? extendedConfig.defaultOptions
+      : extension.parent.options
+
+    return extension
   }
 }

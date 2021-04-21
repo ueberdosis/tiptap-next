@@ -14,9 +14,30 @@ import { Extension } from './Extension'
 import { Node } from './Node'
 import { Mark } from './Mark'
 import { Editor } from './Editor'
-import { Commands } from '.'
+import {
+  Commands,
+  ExtensionConfig,
+  NodeConfig,
+  MarkConfig,
+} from '.'
 
-export type Extensions = (Extension | Node | Mark)[]
+export type AnyConfig = ExtensionConfig | NodeConfig | MarkConfig
+export type AnyExtension = Extension | Node | Mark
+export type Extensions = AnyExtension[]
+
+export type ParentConfig<T> = Partial<{
+  [P in keyof T]: Required<T>[P] extends (...args: any) => any
+    ? (...args: Parameters<Required<T>[P]>) => ReturnType<Required<T>[P]>
+    : T[P]
+}>
+
+export type RemoveThis<T> = T extends (...args: any) => any
+  ? (...args: Parameters<T>) => ReturnType<T>
+  : T
+
+export type MaybeReturnType<T> = T extends (...args: any) => any
+  ? ReturnType<T>
+  : T
 
 export interface EditorOptions {
   element: Element,
@@ -29,9 +50,9 @@ export interface EditorOptions {
   parseOptions: ParseOptions,
   enableInputRules: boolean,
   enablePasteRules: boolean,
+  onBeforeCreate: (props: { editor: Editor }) => void,
   onCreate: (props: { editor: Editor }) => void,
   onUpdate: (props: { editor: Editor }) => void,
-  onViewUpdate: (props: { editor: Editor }) => void,
   onSelectionUpdate: (props: { editor: Editor }) => void,
   onTransaction: (props: { editor: Editor, transaction: Transaction }) => void,
   onFocus: (props: { editor: Editor, event: FocusEvent }) => void,
@@ -39,7 +60,7 @@ export interface EditorOptions {
   onDestroy: () => void,
 }
 
-export type Content = string | JSON | null
+export type Content = string | Record<string, any> | null
 
 export type CommandProps = {
   editor: Editor,
@@ -56,11 +77,13 @@ export type Command = (props: CommandProps) => boolean
 
 export type CommandSpec = (...args: any[]) => Command
 
+export type KeyboardShortcutCommand = (props: { editor: Editor }) => boolean
+
 export type Attribute = {
   default: any,
   rendered?: boolean,
-  renderHTML?: ((attributes: { [key: string]: any }) => { [key: string]: any } | null) | null,
-  parseHTML?: ((element: HTMLElement) => { [key: string]: any } | null) | null,
+  renderHTML?: ((attributes: Record<string, any>) => Record<string, any> | null) | null,
+  parseHTML?: ((element: HTMLElement) => Record<string, any> | null) | null,
   keepOnSplit: boolean,
 }
 
@@ -92,10 +115,6 @@ export type Diff<T extends keyof any, U extends keyof any> =
 
 export type Overwrite<T, U> = Pick<T, Diff<keyof T, keyof U>> & U;
 
-export type AnyObject = {
-  [key: string]: any
-}
-
 export type ValuesOf<T> = T[keyof T];
 
 export type KeysWithTypeOf<T, Type> = ({[P in keyof T]: T[P] extends Type ? P : never })[keyof T]
@@ -107,14 +126,14 @@ export type NodeViewProps = {
   selected: boolean,
   extension: Node,
   getPos: () => number,
-  updateAttributes: (attributes: AnyObject) => void,
+  updateAttributes: (attributes: Record<string, any>) => void,
 }
 
 export type NodeViewRendererProps = {
   editor: Editor,
   node: ProseMirrorNode,
   getPos: (() => number) | boolean,
-  HTMLAttributes: { [key: string]: any },
+  HTMLAttributes: Record<string, any>,
   decorations: Decoration[],
   extension: Node,
 }

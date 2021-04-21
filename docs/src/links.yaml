@@ -1,3 +1,13 @@
+# - title: Documentation
+#   link: introduction
+# - title: Examples
+#   link: /examples
+#   redirect: /examples/default
+# - title: Community
+#   link: community
+# - title: Sponsor
+#   link: https://github.com/ueberdosis/sponsor
+
 - title: Overview
   items:
     - title: Installation
@@ -8,7 +18,6 @@
           skip: true
         - title: React
           link: /installation/react
-          type: new
           skip: true
         - title: Vue 3
           link: /installation/vue3
@@ -21,19 +30,17 @@
           skip: true
         - title: Svelte
           link: /installation/svelte
-          type: draft
           skip: true
+        # - title: CodeSandbox
+        #   link: /installation/codesandbox
+        #   skip: true
         - title: Alpine.js
           link: /installation/alpine
-          type: draft
           skip: true
-        - title: Livewire
-          link: /installation/livewire
-          type: draft
-          skip: true
-        - title: CodeSandbox
-          link: /installation/codesandbox
-          skip: true
+        # - title: Livewire
+        #   link: /installation/livewire
+        #   type: draft
+        #   skip: true
     - title: Upgrade guide
       link: /overview/upgrade-guide
     - title: Become a sponsor
@@ -50,60 +57,59 @@
       link: /examples/default
     - title: Collaborative editing
       link: /examples/collaborative-editing
-      # type: pro
     - title: Markdown shortcuts
       link: /examples/markdown-shortcuts
+    - title: Menus
+      link: /examples/menus
     - title: Tables
       link: /examples/tables
-      # type: pro
     - title: Images
       link: /examples/images
     - title: Formatting
       link: /examples/formatting
     - title: Tasks
-      link: /examples/todo-app
+      link: /examples/tasks
     - title: Long texts
       link: /examples/book
     - title: Drawing
       link: /examples/drawing
     - title: Mentions
-      link: /examples/community
+      link: /examples/suggestions
     - title: Minimal setup
       link: /examples/minimal
     - title: A clever editor
       link: /examples/savvy
     - title: Interactivity
-      link: /examples/interactive
+      link: /examples/interactivity
+    - title: Syntax highlighting
+      link: /examples/syntax-highlighting
+      type: new
 
 - title: Guide
   items:
-    - title: Configure the editor
+    - title: Configuration
       link: /guide/configuration
-    - title: Create a toolbar
-      link: /guide/toolbar
-    - title: Custom styling
+    - title: Menus
+      link: /guide/menus
+    - title: Styling
       link: /guide/styling
+    - title: Output
+      link: /guide/output
     - title: Accessibility
       link: /guide/accessibility
-    - title: Export content
-      link: /guide/content
     - title: Collaborative editing
       link: /guide/collaborative-editing
-      # type: pro
-    - title: Extend the functionality
+    - title: Custom extensions
+      link: /guide/custom-extensions
+    - title: Overwrite & extend
       link: /guide/extend-extensions
-    - title: Build extensions
-      link: /guide/build-extensions
     - title: Interactive node views
       link: /guide/node-views
-      type: new
       items:
         - title: With JavaScript
           link: /guide/node-views/js
-          type: draft
         - title: With React
           link: /guide/node-views/react
-          type: draft
         - title: With Vue
           link: /guide/node-views/vue
         - title: A few examples
@@ -113,12 +119,95 @@
 
 - title: API
   items:
-    - title: Concept
-      link: /api/concept
+    - title: Introduction
+      link: /api/introduction
     - title: Editor
       link: /api/editor
     - title: Commands
       link: /api/commands
+      items:
+        - title: blur
+          link: /api/commands/blur
+        - title: clearContent
+          link: /api/commands/clear-content
+        - title: clearNodes
+          link: /api/commands/clear-nodes
+        - title: createParagraphNear
+          link: /api/commands/create-paragraph-near
+        - title: deleteRange
+          link: /api/commands/delete-range
+        - title: deleteSelection
+          link: /api/commands/delete-selection
+        - title: enter
+          link: /api/commands/enter
+        - title: exitCode
+          link: /api/commands/exit-code
+        - title: extendMarkRange
+          link: /api/commands/extend-mark-range
+        - title: focus
+          link: /api/commands/focus
+        - title: insertContent
+          link: /api/commands/insert-content
+        - title: joinBackward
+          link: /api/commands/join-backward
+        - title: joinForward
+          link: /api/commands/join-forward
+        - title: keyboardShortcut
+          link: /api/commands/keyboard-shortcut
+        - title: liftEmptyBlock
+          link: /api/commands/lift-empty-block
+        - title: liftListItem
+          link: /api/commands/lift-list-item
+        - title: lift
+          link: /api/commands/lift
+        - title: newlineInCode
+          link: /api/commands/newline-in-code
+        - title: raplaceRange
+          link: /api/commands/replace-range
+        - title: replace
+          link: /api/commands/replace
+        - title: resetAttributes
+          link: /api/commands/reset-attributes
+        - title: scrollIntoView
+          link: /api/commands/scroll-into-view
+        - title: selectAll
+          link: /api/commands/select-all
+        - title: selectNodeBackward
+          link: /api/commands/select-node-backward
+        - title: selectNodeForward
+          link: /api/commands/select-node-forward
+        - title: selectParentNode
+          link: /api/commands/select-parent-node
+        - title: setContent
+          link: /api/commands/set-content
+        - title: setMark
+          link: /api/commands/set-mark
+        - title: setNode
+          link: /api/commands/set-node
+        - title: sinkListItem
+          link: /api/commands/sink-list-item
+        - title: splitBlock
+          link: /api/commands/split-block
+        - title: splitListItem
+          link: /api/commands/split-list-item
+        - title: toggleList
+          link: /api/commands/toggle-list
+        - title: toggleMark
+          link: /api/commands/toggle-mark
+        - title: toggleNode
+          link: /api/commands/toggle-node
+        - title: toggleWrap
+          link: /api/commands/toggle-wrap
+        - title: undoInputRule
+          link: /api/commands/undo-input-rule
+        - title: unsetAllMarks
+          link: /api/commands/unset-all-marks
+        - title: unsetMark
+          link: /api/commands/unset-mark
+        - title: updateAtttributes
+          link: /api/commands/update-attributes
+        - title: wrapInList
+          link: /api/commands/wrap-in-list
     - title: Nodes
       link: /api/nodes
       items:
@@ -128,6 +217,9 @@
           link: /api/nodes/bullet-list
         - title: CodeBlock
           link: /api/nodes/code-block
+        - title: CodeBlockLowlight
+          link: /api/nodes/code-block-lowlight
+          type: new
         - title: Document
           link: /api/nodes/document
         - title: Emoji
@@ -154,16 +246,12 @@
           link: /api/nodes/paragraph
         - title: Table
           link: /api/nodes/table
-          # type: pro
         - title: TableRow
           link: /api/nodes/table-row
-          # type: pro
         - title: TableCell
           link: /api/nodes/table-cell
-          # type: pro
         - title: TableHeader
           link: /api/nodes/table-header
-          # type: pro
         - title: TaskList
           link: /api/nodes/task-list
         - title: TaskItem
@@ -192,21 +280,20 @@
     - title: Extensions
       link: /api/extensions
       items:
-        # - title: Annotation
-        #   link: /api/extensions/annotation
-        #   type: draft
         - title: BubbleMenu
           link: /api/extensions/bubble-menu
+          type: new
         - title: CharacterCount
           link: /api/extensions/character-count
         - title: Collaboration
           link: /api/extensions/collaboration
-          # type: pro
         - title: CollaborationCursor
           link: /api/extensions/collaboration-cursor
-          # type: pro
         - title: Dropcursor
           link: /api/extensions/dropcursor
+        - title: FloatingMenu
+          link: /api/extensions/floating-menu
+          type: new
         - title: Focus
           link: /api/extensions/focus
         - title: FontFamily
@@ -230,9 +317,9 @@
           link: /api/utilities/html
         - title: Suggestion
           link: /api/utilities/suggestion
-    - title: Events
-      link: /api/events
-    - title: Schema
-      link: /api/schema
     - title: Keyboard shortcuts
       link: /api/keyboard-shortcuts
+    - title: Schema
+      link: /api/schema
+    - title: Events
+      link: /api/events

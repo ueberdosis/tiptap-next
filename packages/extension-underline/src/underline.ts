@@ -1,9 +1,7 @@
 import { Command, Mark, mergeAttributes } from '@tiptap/core'
 
 export interface UnderlineOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
 declare module '@tiptap/core' {
@@ -38,7 +36,9 @@ export const Underline = Mark.create<UnderlineOptions>({
         tag: 'u',
       },
       {
-        style: 'text-decoration=underline',
+        style: 'text-decoration',
+        consuming: false,
+        getAttrs: style => ((style as string).includes('underline') ? {} : false),
       },
     ]
   },

@@ -1,9 +1,7 @@
 import { Command, Node, mergeAttributes } from '@tiptap/core'
 
 export interface ParagraphOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
 declare module '@tiptap/core' {
@@ -19,6 +17,8 @@ declare module '@tiptap/core' {
 
 export const Paragraph = Node.create<ParagraphOptions>({
   name: 'paragraph',
+
+  priority: 1000,
 
   defaultOptions: {
     HTMLAttributes: {},

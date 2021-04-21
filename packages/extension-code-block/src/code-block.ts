@@ -3,9 +3,7 @@ import { textblockTypeInputRule } from 'prosemirror-inputrules'
 
 export interface CodeBlockOptions {
   languageClassPrefix: string,
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
 declare module '@tiptap/core' {
@@ -101,6 +99,22 @@ export const CodeBlock = Node.create<CodeBlockOptions>({
   addKeyboardShortcuts() {
     return {
       'Mod-Alt-c': () => this.editor.commands.toggleCodeBlock(),
+
+      // remove code block when at start of document or code block is empty
+      Backspace: () => {
+        const { empty, $anchor } = this.editor.state.selection
+        const isAtStart = $anchor.pos === 1
+
+        if (!empty || $anchor.parent.type.name !== this.name) {
+          return false
+        }
+
+        if (isAtStart || !$anchor.parent.textContent.length) {
+          return this.editor.commands.clearNodes()
+        }
+
+        return false
+      },
     }
   },
 

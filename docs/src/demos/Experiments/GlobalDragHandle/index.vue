@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import { Editor, EditorContent, defaultExtensions } from '@tiptap/vue-starter-kit'
+import { Editor, EditorContent } from '@tiptap/vue-2'
+import { defaultExtensions } from '@tiptap/starter-kit'
 import DragHandle from './DragHandle.js'
 
 export default {
@@ -104,6 +105,7 @@ export default {
 
       code {
         color: inherit;
+        padding: 0;
         background: none;
         font-size: 0.8rem;
       }

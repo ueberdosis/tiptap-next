@@ -9,12 +9,12 @@ export const BubbleMenu: React.FC<BubbleMenuProps> = props => {
   const element = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const { editor, keepInBounds = true } = props
+    const { editor, tippyOptions } = props
 
     editor.registerPlugin(BubbleMenuPlugin({
       editor,
       element: element.current as HTMLElement,
-      keepInBounds,
+      tippyOptions,
     }))
 
     return () => {
@@ -23,7 +23,7 @@ export const BubbleMenu: React.FC<BubbleMenuProps> = props => {
   }, [])
 
   return (
-    <div ref={element} className={props.className}>
+    <div ref={element} className={props.className} style={{ visibility: 'hidden' }}>
       {props.children}
     </div>
   )

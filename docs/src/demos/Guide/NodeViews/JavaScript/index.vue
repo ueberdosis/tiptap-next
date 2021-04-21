@@ -5,7 +5,7 @@
 <script>
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import { defaultExtensions } from '@tiptap/starter-kit'
-import VueComponent from './index.js'
+import NodeView from './Extension.js'
 
 export default {
   components: {
@@ -22,13 +22,13 @@ export default {
     this.editor = new Editor({
       extensions: [
         ...defaultExtensions(),
-        VueComponent,
+        NodeView,
       ],
       content: `
         <p>
           This is still the text editor you’re used to, but enriched with node views.
         </p>
-        <node-view count="0"></node-view>
+        <node-view></node-view>
         <p>
           Did you see that? That’s a JavaScript node view. We are really living in the future.
         </p>
@@ -52,7 +52,8 @@ export default {
 
 ::v-deep {
   .node-view {
-    border: 1px solid #adb5bd;
+    background: #FAF594;
+    border: 3px solid #0D0D0D;
     border-radius: 0.5rem;
     margin: 1rem 0;
     position: relative;
@@ -60,7 +61,7 @@ export default {
 
   .label {
     margin-left: 1rem;
-    background-color: #adb5bd;
+    background-color: #0D0D0D;
     font-size: 0.6rem;
     letter-spacing: 1px;
     font-weight: bold;
@@ -73,7 +74,8 @@ export default {
   }
 
   .content {
-    margin: 2.5rem 1rem 1rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
   }
 }
 </style>

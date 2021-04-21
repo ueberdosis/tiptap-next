@@ -56,20 +56,39 @@ export class NodeView<Component, Editor extends CoreEditor = CoreEditor> impleme
   }
 
   onDragStart(event: DragEvent) {
-    if (!this.dom) {
-      return
-    }
-
     const { view } = this.editor
     const target = (event.target as HTMLElement)
 
-    if (this.contentDOM?.contains(target)) {
+    // get the drag handle element
+    // `closest` is not available for text nodes so we may have to use its parent
+    const dragHandle = target.nodeType === 3
+      ? target.parentElement?.closest('[data-drag-handle]')
+      : target.closest('[data-drag-handle]')
+
+    if (
+      !this.dom
+      || this.contentDOM?.contains(target)
+      || !dragHandle
+    ) {
       return
     }
 
-    // sometimes `event.target` is not the `dom` element
-    event.dataTransfer?.setDragImage(this.dom, 0, 0)
+    let x = 0
+    let y = 0
 
+    // calculate offset for drag element if we use a different drag handle element
+    if (this.dom !== dragHandle) {
+      const domBox = this.dom.getBoundingClientRect()
+      const handleBox = dragHandle.getBoundingClientRect()
+
+      x = handleBox.x - domBox.x + event.offsetX
+      y = handleBox.y - domBox.y + event.offsetY
+    }
+
+    event.dataTransfer?.setDragImage(this.dom, x, y)
+
+    // we need to tell ProseMirror that we want to move the whole node
+    // so we create a NodeSelection
     const selection = NodeSelection.create(view.state.doc, this.getPos())
     const transaction = view.state.tr.setSelection(selection)
 
@@ -94,6 +113,7 @@ export class NodeView<Component, Editor extends CoreEditor = CoreEditor> impleme
     }
 
     const isInput = ['INPUT', 'BUTTON', 'SELECT', 'TEXTAREA'].includes(target.tagName)
+      || target.isContentEditable
 
     // any input event within node views should be ignored by ProseMirror
     if (isInput) {
@@ -169,7 +189,7 @@ export class NodeView<Component, Editor extends CoreEditor = CoreEditor> impleme
     }
 
     const contentDOMHasChanged = !this.contentDOM.contains(mutation.target)
-      || this.contentDOM === mutation.target
+      || (this.contentDOM === mutation.target && mutation.type === 'attributes')
 
     return contentDOMHasChanged
   }

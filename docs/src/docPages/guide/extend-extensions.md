@@ -1,4 +1,4 @@
-# Extend the functionality
+# Overwrite & extend
 
 ## toc
 
@@ -37,7 +37,26 @@ The same applies to every aspect of an existing extension, except to the name. L
 ### Name
 The extension name is used in a whole lot of places and changing it isn’t too easy. If you want to change the name of an existing extension, we would recommended to copy the whole extension and change the name in all occurrences.
 
-The extension name is also part of the JSON. If you [store your content as JSON](/guide/content#option-1-json), you need to change the name there too.
+The extension name is also part of the JSON. If you [store your content as JSON](/guide/output#option-1-json), you need to change the name there too.
+
+### Priority
+The priority defines the order in which extensions are registered. The default priority is `100`, that’s what most extension have. Extensions with a higher priority will be loaded earlier.
+
+```js
+import Link from '@tiptap/extension-link'
+
+const CustomLink = Link.extend({
+  priority: 1000,
+})
+```
+
+The order in which extensions are loaded influences two things:
+
+1. #### Plugin order
+   Plugins of extensions with a higher priority will run first.
+
+2. #### Schema order
+   The [`Link`](/api/marks/link) mark for example has a higher priority, which means it’ll be rendered as `<a href="…"><strong>Example</strong></a>` instead of `<strong><a href="…">Example</></strong>`.
 
 ### Settings
 All settings can be configured through the extension anyway, but if you want to change the default settings, for example to provide a library on top of tiptap for other developers, you can do it like that:
@@ -47,6 +66,7 @@ import Heading from '@tiptap/extension-heading'
 
 const CustomHeading = Heading.extend({
   defaultOptions: {
+    ...Heading.options,
     levels: [1, 2, 3],
   },
 })
@@ -215,6 +235,10 @@ renderHTML({ HTMLAttributes }) {
 If you want to add some specific attributes there, import the `mergeAttributes` helper from `@tiptap/core`:
 
 ```js
+import { mergeAttributes } from '@tiptap/core'
+
+// ...
+
 renderHTML({ HTMLAttributes }) {
   return ['a', mergeAttributes(HTMLAttributes, { rel: this.options.rel }), 0]
 },
@@ -224,36 +248,36 @@ renderHTML({ HTMLAttributes }) {
 The `parseHTML()` function tries to load the editor document from HTML. The function gets the HTML DOM element passed as a parameter, and is expected to return an object with attributes and their values. Here is a simplified example from the [`Bold`](/api/marks/bold) mark:
 
 ```js
-  parseHTML() {
-    return [
-      {
-        tag: 'strong',
-      },
-    ]
-  },
+parseHTML() {
+  return [
+    {
+      tag: 'strong',
+    },
+  ]
+},
 ```
 
 This defines a rule to convert all `<strong>` tags to `Bold` marks. But you can get more advanced with this, here is the full example from the extension:
 
 ```js
-  parseHTML() {
-    return [
-      // <strong>
-      {
-        tag: 'strong',
-      },
-      // <b>
-      {
-        tag: 'b',
-        getAttrs: node => node.style.fontWeight !== 'normal' && null,
-      },
-      // <span style="font-weight: bold">
-      {
-        style: 'font-weight',
-        getAttrs: value => /^(bold(er)?|[5-9]\d{2,})$/.test(value as string) && null,
-      },
-    ]
-  },
+parseHTML() {
+  return [
+    // <strong>
+    {
+      tag: 'strong',
+    },
+    // <b>
+    {
+      tag: 'b',
+      getAttrs: node => node.style.fontWeight !== 'normal' && null,
+    },
+    // <span style="font-weight: bold"> and <span style="font-weight: 700">
+    {
+      style: 'font-weight',
+      getAttrs: value => /^(bold(er)?|[5-9]\d{2,})$/.test(value as string) && null,
+    },
+  ]
+},
 ```
 
 This looks for `<strong>` and `<b>` tags, and any HTML tag with an inline style setting the `font-weight` to bold.
@@ -391,7 +415,7 @@ const CustomLink = Link.extend({
     return () => {
       const container = document.createElement('div')
 
-      container.addEventListener('change', event => {
+      container.addEventListener('click', event => {
         alert('clicked on the container')
       })
 

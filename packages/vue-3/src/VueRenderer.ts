@@ -1,16 +1,16 @@
 import { reactive, markRaw, Component } from 'vue'
-import { AnyObject } from '@tiptap/core'
-import { Editor } from './Editor'
+import { Editor } from '@tiptap/core'
+import { Editor as ExtendedEditor } from './Editor'
 
 export interface VueRendererOptions {
   editor: Editor,
-  props?: AnyObject,
+  props?: Record<string, any>,
 }
 
 export class VueRenderer {
   id: string
 
-  editor: Editor
+  editor: ExtendedEditor
 
   component: Component
 
@@ -18,11 +18,11 @@ export class VueRenderer {
 
   element: Element
 
-  props: AnyObject
+  props: Record<string, any>
 
   constructor(component: Component, { props = {}, editor }: VueRendererOptions) {
     this.id = Math.floor(Math.random() * 0xFFFFFFFF).toString()
-    this.editor = editor
+    this.editor = editor as ExtendedEditor
     this.component = markRaw(component)
     this.teleportElement = document.createElement('div')
     this.element = this.teleportElement
@@ -44,7 +44,7 @@ export class VueRenderer {
     return this.editor.contentComponent?.ctx.$refs[this.id]
   }
 
-  updateProps(props: AnyObject = {}): void {
+  updateProps(props: Record<string, any> = {}): void {
     Object
       .entries(props)
       .forEach(([key, value]) => {

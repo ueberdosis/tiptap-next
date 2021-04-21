@@ -10,6 +10,9 @@ You can define your event listeners on a new editor instance right-away:
 
 ```js
 const editor = new Editor({
+  onBeforeCreate({ editor }) {
+    // Before the view is created.
+  },
   onCreate({ editor }) {
     // The editor is ready.
   },
@@ -18,9 +21,6 @@ const editor = new Editor({
   },
   onSelectionUpdate({ editor }) {
     // The selection has changed.
-  },
-  onViewUpdate({ editor }) {
-    // The view has changed.
   },
   onTransaction({ editor, transaction }) {
     // The editor state has changed.
@@ -42,6 +42,10 @@ Or you can register your event listeners on a running editor instance:
 
 ### Bind event listeners
 ```js
+editor.on('beforeCreate', ({ editor }) => {
+  // Before the view is created.
+}
+
 editor.on('create', ({ editor }) => {
   // The editor is ready.
 }
@@ -52,10 +56,6 @@ editor.on('update', ({ editor }) => {
 
 editor.on('selectionUpdate', ({ editor }) => {
   // The selection has changed.
-}
-
-editor.on('viewUpdate', ({ editor }) => {
-  // The view has changed.
 }
 
 editor.on('transaction', ({ editor, transaction }) => {
@@ -97,6 +97,9 @@ Moving your event listeners to custom extensions (or nodes, or marks) is also po
 import { Extension } from '@tiptap/core'
 
 const CustomExtension = Extension.create({
+  onBeforeCreate({ editor }) {
+    // Before the view is created.
+  },
   onCreate({ editor }) {
     // The editor is ready.
   },
@@ -105,9 +108,6 @@ const CustomExtension = Extension.create({
   },
   onSelectionUpdate({ editor }) {
     // The selection has changed.
-  },
-  onViewUpdate({ editor }) {
-    // The view has changed.
   },
   onTransaction({ editor, transaction }) {
     // The editor state has changed.

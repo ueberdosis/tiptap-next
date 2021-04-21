@@ -2,9 +2,7 @@ import { Node, mergeAttributes } from '@tiptap/core'
 import Suggestion, { SuggestionOptions } from '@tiptap/suggestion'
 
 export type MentionOptions = {
-  HTMLAttributes: {
-    [key: string]: any,
-  },
+  HTMLAttributes: Record<string, any>,
   suggestion: Omit<SuggestionOptions, 'editor'>,
 }
 
@@ -20,7 +18,7 @@ export const Mention = Node.create<MentionOptions>({
           .chain()
           .focus()
           .replaceRange(range, 'mention', props)
-          .insertText(' ')
+          .insertContent(' ')
           .run()
       },
       allow: ({ editor, range }) => {

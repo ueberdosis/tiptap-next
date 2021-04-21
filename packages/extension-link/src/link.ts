@@ -8,9 +8,7 @@ import { Plugin, PluginKey } from 'prosemirror-state'
 
 export interface LinkOptions {
   openOnClick: boolean,
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
 declare module '@tiptap/core' {
@@ -37,6 +35,8 @@ export const pasteRegexWithBrackets = /(?:\()https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%
 
 export const Link = Mark.create<LinkOptions>({
   name: 'link',
+
+  priority: 1000,
 
   inclusive: false,
 
@@ -101,14 +101,15 @@ export const Link = Mark.create<LinkOptions>({
         props: {
           handleClick: (view, pos, event) => {
             const attrs = this.editor.getMarkAttributes('link')
+            const link = (event.target as HTMLElement)?.closest('a')
 
-            if (attrs.href && event.target instanceof HTMLAnchorElement) {
+            if (link && attrs.href) {
               window.open(attrs.href, attrs.target)
 
-              return false
+              return true
             }
 
-            return true
+            return false
           },
         },
       }),
