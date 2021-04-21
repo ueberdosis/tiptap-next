@@ -8,8 +8,7 @@
 </template>
 
 <script>
-import { Editor } from '@tiptap/core'
-import { EditorContent } from '@tiptap/vue'
+import { Editor, EditorContent } from '@tiptap/vue-2'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -31,7 +30,9 @@ export default {
     addImage() {
       const url = window.prompt('URL')
 
-      this.editor.chain().focus().setImage({ src: url }).run()
+      if (url) {
+        this.editor.chain().focus().setImage({ src: url }).run()
+      }
     },
   },
 
@@ -68,6 +69,10 @@ export default {
   img {
     max-width: 100%;
     height: auto;
+
+    &.ProseMirror-selectednode {
+      outline: 3px solid #68CEF8;
+    }
   }
 }
 </style>

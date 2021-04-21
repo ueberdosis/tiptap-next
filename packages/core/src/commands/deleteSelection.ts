@@ -1,9 +1,17 @@
 import { deleteSelection as originalDeleteSelection } from 'prosemirror-commands'
-import { Command } from '../types'
+import { Command, RawCommands } from '../types'
 
-/**
- * Delete the selection, if there is one.
- */
-export const deleteSelection = (): Command => ({ state, dispatch }) => {
+declare module '@tiptap/core' {
+  interface Commands {
+    deleteSelection: {
+      /**
+       * Delete the selection, if there is one.
+       */
+      deleteSelection: () => Command,
+    }
+  }
+}
+
+export const deleteSelection: RawCommands['deleteSelection'] = () => ({ state, dispatch }) => {
   return originalDeleteSelection(state, dispatch)
 }

@@ -35,7 +35,8 @@ function tableWrapper() {
 
 module.exports = {
   siteName: 'tiptap',
-  titleTemplate: '%s | tiptap',
+  titleTemplate: '%s – tiptap editor',
+  icon: './src/favicon.svg',
   port: 3000,
   plugins: [
     {
@@ -44,7 +45,6 @@ module.exports = {
         typeName: 'DocPage',
         baseDir: './src/docPages',
         template: './src/templates/DocPage/index.vue',
-        index: './introduction',
         plugins: [
           '@gridsome/remark-prismjs',
           'remark-container',
@@ -59,12 +59,6 @@ module.exports = {
             },
           },
         },
-      },
-    },
-    {
-      use: 'gridsome-plugin-simple-analytics',
-      options: {
-        domain: 'data.next.tiptap.dev',
       },
     },
   ],

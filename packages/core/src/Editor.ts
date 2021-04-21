@@ -1,18 +1,25 @@
-import { EditorState, Plugin, Transaction } from 'prosemirror-state'
+import {
+  EditorState, Plugin, PluginKey, Transaction,
+} from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view'
-import { Schema, DOMParser, Node } from 'prosemirror-model'
-import magicMethods from './utilities/magicMethods'
-import elementFromString from './utilities/elementFromString'
+import { Schema } from 'prosemirror-model'
 import getNodeAttributes from './helpers/getNodeAttributes'
 import getMarkAttributes from './helpers/getMarkAttributes'
 import isActive from './helpers/isActive'
 import removeElement from './utilities/removeElement'
+import createDocument from './helpers/createDocument'
 import getHTMLFromFragment from './helpers/getHTMLFromFragment'
+import isNodeEmpty from './helpers/isNodeEmpty'
 import createStyleTag from './utilities/createStyleTag'
 import CommandManager from './CommandManager'
 import ExtensionManager from './ExtensionManager'
 import EventEmitter from './EventEmitter'
-import { EditorOptions, EditorContent, CommandSpec } from './types'
+import {
+  EditorOptions,
+  CanCommands,
+  ChainedCommands,
+  SingleCommands,
+} from './types'
 import * as extensions from './extensions'
 import style from './style'
 
@@ -22,14 +29,11 @@ export interface HTMLElement {
   editor?: Editor
 }
 
-@magicMethods
 export class Editor extends EventEmitter {
-
-  private proxy!: Editor
 
   private commandManager!: CommandManager
 
-  private extensionManager!: ExtensionManager
+  public extensionManager!: ExtensionManager
 
   private css!: HTMLStyleElement
 
@@ -50,9 +54,10 @@ export class Editor extends EventEmitter {
     parseOptions: {},
     enableInputRules: true,
     enablePasteRules: true,
+    onBeforeCreate: () => null,
     onCreate: () => null,
     onUpdate: () => null,
-    onSelection: () => null,
+    onSelectionUpdate: () => null,
     onTransaction: () => null,
     onFocus: () => null,
     onBlur: () => null,
@@ -61,22 +66,17 @@ export class Editor extends EventEmitter {
 
   constructor(options: Partial<EditorOptions> = {}) {
     super()
-    this.options = { ...this.options, ...options }
-    this.on('createdProxy', this.init)
-  }
-
-  /**
-   * This method is called after the proxy is initialized.
-   */
-  private init() {
-    this.createCommandManager()
+    this.setOptions(options)
     this.createExtensionManager()
+    this.createCommandManager()
     this.createSchema()
+    this.on('beforeCreate', this.options.onCreate)
+    this.emit('beforeCreate', { editor: this })
     this.createView()
     this.injectCSS()
     this.on('create', this.options.onCreate)
     this.on('update', this.options.onUpdate)
-    this.on('selection', this.options.onSelection)
+    this.on('selectionUpdate', this.options.onSelectionUpdate)
     this.on('transaction', this.options.onTransaction)
     this.on('focus', this.options.onFocus)
     this.on('blur', this.options.onBlur)
@@ -84,45 +84,36 @@ export class Editor extends EventEmitter {
 
     window.setTimeout(() => {
       this.commands.focus(this.options.autofocus)
-      this.emit('create')
+      this.emit('create', { editor: this })
     }, 0)
-  }
 
-  /**
-   * A magic method to call commands.
-   *
-   * @param name The name of the command
-   */
-  // eslint-disable-next-line
-  private __get(name: string) {
-    // TODO: maybe remove proxy
   }
 
   /**
    * An object of all registered commands.
    */
-  public get commands() {
+  public get commands(): SingleCommands {
     return this.commandManager.createCommands()
   }
 
   /**
    * Create a command chain to call multiple commands at once.
    */
-  public chain() {
+  public chain(): ChainedCommands {
     return this.commandManager.createChain()
   }
 
   /**
    * Check if a command or a command chain can be executed. Without executing it.
    */
-  public can() {
+  public can(): CanCommands {
     return this.commandManager.createCan()
   }
 
   /**
    * Inject CSS styles.
    */
-  private injectCSS() {
+  private injectCSS(): void {
     if (this.options.injectCSS && document) {
       this.css = createStyleTag(style)
     }
@@ -133,8 +124,15 @@ export class Editor extends EventEmitter {
    *
    * @param options A list of options
    */
-  public setOptions(options: Partial<EditorOptions> = {}) {
+  public setOptions(options: Partial<EditorOptions> = {}): void {
     this.options = { ...this.options, ...options }
+  }
+
+  /**
+   * Update editable state of the editor.
+   */
+  public setEditable(editable: boolean): void {
+    this.setOptions({ editable })
 
     if (this.view && this.state && !this.isDestroyed) {
       this.view.updateState(this.state)
@@ -144,38 +142,15 @@ export class Editor extends EventEmitter {
   /**
    * Returns whether the editor is editable.
    */
-  public get isEditable() {
+  public get isEditable(): boolean {
     return this.view && this.view.editable
   }
 
   /**
    * Returns the editor state.
    */
-  public get state() {
+  public get state(): EditorState {
     return this.view.state
-  }
-
-  /**
-   * Register a list of commands.
-   *
-   * @param commands A list of commands
-   */
-  public registerCommands(commands: { [key: string]: CommandSpec }) {
-    Object
-      .entries(commands)
-      .forEach(([name, command]) => this.registerCommand(name, command))
-  }
-
-  /**
-   * Register a command.
-   *
-   * @param name The name of your command
-   * @param callback The method of your command
-   */
-  public registerCommand(name: string, callback: CommandSpec): Editor {
-    this.commandManager.registerCommand(name, callback)
-
-    return this.proxy
   }
 
   /**
@@ -184,10 +159,10 @@ export class Editor extends EventEmitter {
    * @param plugin A ProseMirror plugin
    * @param handlePlugins Control how to merge the plugin into the existing plugins.
    */
-  public registerPlugin(plugin: Plugin, handlePlugins?: (newPlugin: Plugin, plugins: Plugin[]) => Plugin[]) {
+  public registerPlugin(plugin: Plugin, handlePlugins?: (newPlugin: Plugin, plugins: Plugin[]) => Plugin[]): void {
     const plugins = typeof handlePlugins === 'function'
       ? handlePlugins(plugin, this.state.plugins)
-      : [plugin, ...this.state.plugins]
+      : [...this.state.plugins, plugin]
 
     const state = this.state.reconfigure({ plugins })
 
@@ -199,10 +174,19 @@ export class Editor extends EventEmitter {
    *
    * @param name The plugins name
    */
-  public unregisterPlugin(name: string) {
+  public unregisterPlugin(nameOrPluginKey: string | PluginKey): void {
+    if (this.isDestroyed) {
+      return
+    }
+
+    const name = typeof nameOrPluginKey === 'string'
+      ? `${nameOrPluginKey}$`
+      // @ts-ignore
+      : nameOrPluginKey.key
+
     const state = this.state.reconfigure({
       // @ts-ignore
-      plugins: this.state.plugins.filter(plugin => !plugin.key.startsWith(`${name}$`)),
+      plugins: this.state.plugins.filter(plugin => !plugin.key.startsWith(name)),
     })
 
     this.view.updateState(state)
@@ -211,38 +195,38 @@ export class Editor extends EventEmitter {
   /**
    * Creates an extension manager.
    */
-  private createExtensionManager() {
+  private createExtensionManager(): void {
     const coreExtensions = Object.entries(extensions).map(([, extension]) => extension)
-    const allExtensions = [...this.options.extensions, ...coreExtensions].filter(extension => {
+    const allExtensions = [...coreExtensions, ...this.options.extensions].filter(extension => {
       return ['extension', 'node', 'mark'].includes(extension?.type)
     })
 
-    this.extensionManager = new ExtensionManager(allExtensions, this.proxy)
+    this.extensionManager = new ExtensionManager(allExtensions, this)
   }
 
   /**
    * Creates an command manager.
    */
-  private createCommandManager() {
-    this.commandManager = new CommandManager(this.proxy)
+  private createCommandManager(): void {
+    this.commandManager = new CommandManager(this, this.extensionManager.commands)
   }
 
   /**
    * Creates a ProseMirror schema.
    */
-  private createSchema() {
+  private createSchema(): void {
     this.schema = this.extensionManager.schema
   }
 
   /**
    * Creates a ProseMirror view.
    */
-  private createView() {
+  private createView(): void {
     this.view = new EditorView(this.options.element, {
       ...this.options.editorProps,
       dispatchTransaction: this.dispatchTransaction.bind(this),
       state: EditorState.create({
-        doc: this.createDocument(this.options.content),
+        doc: createDocument(this.options.content, this.schema, this.options.parseOptions),
       }),
     })
 
@@ -259,44 +243,32 @@ export class Editor extends EventEmitter {
     // Let’s store the editor instance in the DOM element.
     // So we’ll have access to it for tests.
     const dom = this.view.dom as HTMLElement
-    dom.editor = this.proxy
+    dom.editor = this
   }
 
   /**
    * Creates all node views.
    */
-  public createNodeViews() {
+  public createNodeViews(): void {
     this.view.setProps({
       nodeViews: this.extensionManager.nodeViews,
     })
   }
 
-  /**
-   * Creates a ProseMirror document.
-   */
-  public createDocument = (content: EditorContent, parseOptions = this.options.parseOptions): Node => {
-    if (content && typeof content === 'object') {
-      try {
-        return this.schema.nodeFromJSON(content)
-      } catch (error) {
-        console.warn(
-          '[tiptap warn]: Invalid content.',
-          'Passed value:',
-          content,
-          'Error:',
-          error,
-        )
-        return this.createDocument('')
-      }
-    }
+  public isCapturingTransaction = false
 
-    if (typeof content === 'string') {
-      return DOMParser
-        .fromSchema(this.schema)
-        .parse(elementFromString(content), parseOptions)
-    }
+  private capturedTransaction: Transaction | null = null
 
-    return this.createDocument('')
+  public captureTransaction(fn: Function) {
+    this.isCapturingTransaction = true
+    fn()
+    this.isCapturingTransaction = false
+
+    const tr = this.capturedTransaction
+
+    this.capturedTransaction = null
+
+    return tr
   }
 
   /**
@@ -304,33 +276,63 @@ export class Editor extends EventEmitter {
    *
    * @param transaction An editor state transaction
    */
-  private dispatchTransaction(transaction: Transaction) {
+  private dispatchTransaction(transaction: Transaction): void {
+    if (transaction.docChanged && !this.isEditable) {
+      return
+    }
+
+    if (this.isCapturingTransaction) {
+      if (!this.capturedTransaction) {
+        this.capturedTransaction = transaction
+
+        return
+      }
+
+      transaction.steps.forEach(step => this.capturedTransaction?.step(step))
+
+      return
+    }
+
     const state = this.state.apply(transaction)
     const selectionHasChanged = !this.state.selection.eq(state.selection)
 
     this.view.updateState(state)
-    this.emit('transaction', { transaction })
+    this.emit('transaction', {
+      editor: this,
+      transaction,
+    })
 
     if (selectionHasChanged) {
-      this.emit('selection')
+      this.emit('selectionUpdate', {
+        editor: this,
+      })
     }
 
     const focus = transaction.getMeta('focus')
     const blur = transaction.getMeta('blur')
 
     if (focus) {
-      this.emit('focus', { event: focus.event })
+      this.emit('focus', {
+        editor: this,
+        event: focus.event,
+      })
     }
 
     if (blur) {
-      this.emit('blur', { event: blur.event })
+      this.emit('blur', {
+        editor: this,
+        event: blur.event,
+      })
     }
 
     if (!transaction.docChanged || transaction.getMeta('preventUpdate')) {
       return
     }
 
-    this.emit('update', { transaction })
+    this.emit('update', {
+      editor: this,
+      transaction,
+    })
   }
 
   /**
@@ -338,7 +340,7 @@ export class Editor extends EventEmitter {
    *
    * @param name Name of the node
    */
-  public getNodeAttributes(name: string) {
+  public getNodeAttributes(name: string): Record<string, any> {
     return getNodeAttributes(this.state, name)
   }
 
@@ -347,7 +349,7 @@ export class Editor extends EventEmitter {
    *
    * @param name Name of the mark
    */
-  public getMarkAttributes(name: string) {
+  public getMarkAttributes(name: string): Record<string, any> {
     return getMarkAttributes(this.state, name)
   }
 
@@ -374,31 +376,35 @@ export class Editor extends EventEmitter {
   /**
    * Get the document as JSON.
    */
-  public getJSON() {
+  public getJSON(): Record<string, any> {
     return this.state.doc.toJSON()
   }
 
   /**
    * Get the document as HTML.
    */
-  public getHTML() {
+  public getHTML(): string {
     return getHTMLFromFragment(this.state.doc, this.schema)
   }
 
   /**
    * Check if there is no content.
    */
-  public isEmpty() {
-    const defaultContent = this.state.doc.type.createAndFill()?.toJSON()
-    const content = this.getJSON()
+  public get isEmpty(): boolean {
+    return isNodeEmpty(this.state.doc)
+  }
 
-    return JSON.stringify(defaultContent) === JSON.stringify(content)
+  /**
+   * Get the number of characters for the current document.
+   */
+  public getCharacterCount(): number {
+    return this.state.doc.content.size - 2
   }
 
   /**
    * Destroy the editor.
    */
-  public destroy() {
+  public destroy(): void {
     this.emit('destroy')
 
     if (this.view) {
@@ -412,7 +418,7 @@ export class Editor extends EventEmitter {
   /**
    * Check if the editor is already destroyed.
    */
-  private get isDestroyed() {
+  public get isDestroyed(): boolean {
     // @ts-ignore
     return !this.view?.docView
   }

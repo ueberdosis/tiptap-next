@@ -3,12 +3,23 @@ import { yCursorPlugin } from 'y-prosemirror'
 
 export interface CollaborationCursorOptions {
   provider: any,
-  user: { [key: string]: any },
-  render (user: { [key: string]: any }): HTMLElement,
+  user: Record<string, any>,
+  render (user: Record<string, any>): HTMLElement,
   onUpdate: (users: { clientId: string, [key: string]: any }[]) => null,
 }
 
-const awarenessStatesToArray = (states: Map<number, { [key: string]: any }>) => {
+declare module '@tiptap/core' {
+  interface Commands {
+    collaborationCursor: {
+      /**
+       * Update details of the current user
+       */
+      user: (attributes: Record<string, any>) => Command,
+    }
+  }
+}
+
+const awarenessStatesToArray = (states: Map<number, Record<string, any>>) => {
   return Array.from(states.entries()).map(([key, value]) => {
     return {
       clientId: key,
@@ -17,10 +28,12 @@ const awarenessStatesToArray = (states: Map<number, { [key: string]: any }>) => 
   })
 }
 
-export const CollaborationCursor = Extension.create({
+export const CollaborationCursor = Extension.create<CollaborationCursorOptions>({
   name: 'collaborationCursor',
 
-  defaultOptions: <CollaborationCursorOptions>{
+  priority: 1000,
+
+  defaultOptions: {
     provider: null,
     user: {
       name: null,
@@ -44,10 +57,7 @@ export const CollaborationCursor = Extension.create({
 
   addCommands() {
     return {
-      /**
-       * Update details of the current user
-       */
-      user: (attributes: { [key: string]: any }): Command => () => {
+      user: attributes => () => {
         this.options.user = attributes
 
         this.options.provider.awareness.setLocalStateField('user', this.options.user)
@@ -87,9 +97,3 @@ export const CollaborationCursor = Extension.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    CollaborationCursor: typeof CollaborationCursor,
-  }
-}

@@ -2,16 +2,24 @@ import { Command, Node, mergeAttributes } from '@tiptap/core'
 import { exitCode } from 'prosemirror-commands'
 
 export interface HardBreakOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
-export const HardBreak = Node.create({
+declare module '@tiptap/core' {
+  interface Commands {
+    hardBreak: {
+      /**
+       * Add a hard break
+       */
+      setHardBreak: () => Command,
+    }
+  }
+}
+
+export const HardBreak = Node.create<HardBreakOptions>({
   name: 'hardBreak',
 
-  defaultOptions: <HardBreakOptions>{
-    languageClassPrefix: 'language-',
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -33,10 +41,7 @@ export const HardBreak = Node.create({
 
   addCommands() {
     return {
-      /**
-       * Add a hard break
-       */
-      setHardBreak: (): Command => ({ commands, state, dispatch }) => {
+      setHardBreak: () => ({ commands, state, dispatch }) => {
         return commands.first([
           () => exitCode(state, dispatch),
           () => {
@@ -58,9 +63,3 @@ export const HardBreak = Node.create({
     }
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    HardBreak: typeof HardBreak,
-  }
-}

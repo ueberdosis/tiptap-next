@@ -1,10 +1,13 @@
 # Document
+[![Version](https://img.shields.io/npm/v/@tiptap/extension-document.svg?label=version)](https://www.npmjs.com/package/@tiptap/extension-document)
+[![Downloads](https://img.shields.io/npm/dm/@tiptap/extension-document.svg)](https://npmcharts.com/compare/@tiptap/extension-document?minimal=true)
+
 **The `Document` extension is required**, no matter what you build with tiptap. It’s a so called “topNode”, a node that’s the home to all other nodes. Think of it like the `<body>` tag for your document.
 
-The node is very tiny though. It defines a name of the node (`document`), is configured to be a top node (`topNode: true`) and that it can contain multiple other nodes (`block`). That’s all. But have a look yourself:
+The node is very tiny though. It defines a name of the node (`document`), is configured to be a top node (`topNode: true`) and that it can contain multiple other nodes (`block+`). That’s all. But have a look yourself:
 
 :::warning Breaking Change from 1.x → 2.x
-tiptap 1 tried to hide that node from you, but it has always been there. A tiny, but important change though: **We renamed the default type from `doc` to `document`.** To keep it like that, use your own implementation of the `Document` node or migrate the stored JSON to use the new name.
+tiptap 1 tried to hide that node from you, but it has always been there. You have to explicitly import it from now on (or use `defaultExtensions()`).
 :::
 
 ## Installation

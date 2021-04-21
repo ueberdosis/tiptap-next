@@ -7,9 +7,26 @@ import {
 } from '@tiptap/core'
 
 export interface BoldOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    bold: {
+      /**
+       * Set a bold mark
+       */
+      setBold: () => Command,
+      /**
+       * Toggle a bold mark
+       */
+      toggleBold: () => Command,
+      /**
+       * Unset a bold mark
+       */
+      unsetBold: () => Command,
+    }
+  }
 }
 
 export const starInputRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))$/gm
@@ -17,10 +34,10 @@ export const starPasteRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/gm
 export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/gm
 export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))/gm
 
-export const Bold = Mark.create({
+export const Bold = Mark.create<BoldOptions>({
   name: 'bold',
 
-  defaultOptions: <BoldOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -46,22 +63,13 @@ export const Bold = Mark.create({
 
   addCommands() {
     return {
-      /**
-       * Set a bold mark
-       */
-      setBold: (): Command => ({ commands }) => {
+      setBold: () => ({ commands }) => {
         return commands.setMark('bold')
       },
-      /**
-       * Toggle a bold mark
-       */
-      toggleBold: (): Command => ({ commands }) => {
+      toggleBold: () => ({ commands }) => {
         return commands.toggleMark('bold')
       },
-      /**
-       * Unset a bold mark
-       */
-      unsetBold: (): Command => ({ commands }) => {
+      unsetBold: () => ({ commands }) => {
         return commands.unsetMark('bold')
       },
     }
@@ -87,9 +95,3 @@ export const Bold = Mark.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Bold: typeof Bold,
-  }
-}

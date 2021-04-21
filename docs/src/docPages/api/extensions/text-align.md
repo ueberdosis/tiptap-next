@@ -1,5 +1,12 @@
 # TextAlign
+[![Version](https://img.shields.io/npm/v/@tiptap/extension-text-align.svg?label=version)](https://www.npmjs.com/package/@tiptap/extension-text-align)
+[![Downloads](https://img.shields.io/npm/dm/@tiptap/extension-text-align.svg)](https://npmcharts.com/compare/@tiptap/extension-text-align?minimal=true)
+
 This extension adds a text align attribute to a specified list of nodes. The attribute is used to align the text.
+
+:::warning Firefox bug
+`text-align: justify` doesn't work together with `white-space: pre-wrap` in Firefox, [that’s a known issue](https://bugzilla.mozilla.org/show_bug.cgi?id=1253840).
+:::
 
 ## Installation
 ```bash

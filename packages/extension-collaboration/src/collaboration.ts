@@ -1,10 +1,27 @@
 import { Extension, Command } from '@tiptap/core'
+import { UndoManager } from 'yjs'
 import {
   redo,
   undo,
   ySyncPlugin,
   yUndoPlugin,
+  yUndoPluginKey,
 } from 'y-prosemirror'
+
+declare module '@tiptap/core' {
+  interface Commands {
+    collaboration: {
+      /**
+       * Undo recent changes
+       */
+      undo: () => Command,
+      /**
+       * Reapply reverted changes
+       */
+      redo: () => Command,
+    }
+  }
+}
 
 export interface CollaborationOptions {
   /**
@@ -21,10 +38,10 @@ export interface CollaborationOptions {
   fragment: any,
 }
 
-export const Collaboration = Extension.create({
+export const Collaboration = Extension.create<CollaborationOptions>({
   name: 'collaboration',
 
-  defaultOptions: <CollaborationOptions>{
+  defaultOptions: {
     document: null,
     field: 'default',
     fragment: null,
@@ -32,19 +49,33 @@ export const Collaboration = Extension.create({
 
   addCommands() {
     return {
-      /**
-       * Undo recent changes
-       */
-      undo: (): Command => ({ tr, state }) => {
+      undo: () => ({ tr, state, dispatch }) => {
         tr.setMeta('preventDispatch', true)
+
+        const undoManager: UndoManager = yUndoPluginKey.getState(state).undoManager
+
+        if (undoManager.undoStack.length === 0) {
+          return false
+        }
+
+        if (!dispatch) {
+          return true
+        }
 
         return undo(state)
       },
-      /**
-       * Reapply reverted changes
-       */
-      redo: (): Command => ({ tr, state }) => {
+      redo: () => ({ tr, state, dispatch }) => {
         tr.setMeta('preventDispatch', true)
+
+        const undoManager: UndoManager = yUndoPluginKey.getState(state).undoManager
+
+        if (undoManager.redoStack.length === 0) {
+          return false
+        }
+
+        if (!dispatch) {
+          return true
+        }
 
         return redo(state)
       },
@@ -70,9 +101,3 @@ export const Collaboration = Extension.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Collaboration: typeof Collaboration,
-  }
-}

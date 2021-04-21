@@ -7,10 +7,10 @@ export interface DropcursorOptions {
   class: string | null,
 }
 
-export const Dropcursor = Extension.create({
+export const Dropcursor = Extension.create<DropcursorOptions>({
   name: 'dropCursor',
 
-  defaultOptions: <DropcursorOptions>{
+  defaultOptions: {
     color: 'black',
     width: 1,
     class: null,
@@ -22,9 +22,3 @@ export const Dropcursor = Extension.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Dropcursor: typeof Dropcursor,
-  }
-}

@@ -3,8 +3,7 @@
 </template>
 
 <script>
-import { Editor } from '@tiptap/core'
-import { EditorContent } from '@tiptap/vue'
+import { Editor, EditorContent } from '@tiptap/vue-2'
 import { defaultExtensions } from '@tiptap/starter-kit'
 
 export default {
@@ -27,7 +26,11 @@ export default {
 
   watch: {
     value(value) {
+      // HTML
       const isSame = this.editor.getHTML() === value
+
+      // JSON
+      // const isSame = this.editor.getJSON().toString() === value.toString()
 
       if (isSame) {
         return
@@ -41,10 +44,13 @@ export default {
     this.editor = new Editor({
       extensions: defaultExtensions(),
       content: this.value,
-    })
+      onUpdate: () => {
+        // HTML
+        this.$emit('input', this.editor.getHTML())
 
-    this.editor.on('update', () => {
-      this.$emit('input', this.editor.getHTML())
+        // JSON
+        // this.$emit('input', this.editor.getJSON())
+      },
     })
   },
 

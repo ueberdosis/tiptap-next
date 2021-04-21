@@ -24,7 +24,7 @@ export const FocusEvents = Extension.create({
 
               view.dispatch(transaction)
 
-              return true
+              return false
             },
             blur: (view, event) => {
               editor.isFocused = false
@@ -35,7 +35,7 @@ export const FocusEvents = Extension.create({
 
               view.dispatch(transaction)
 
-              return true
+              return false
             },
           },
         },
@@ -43,9 +43,3 @@ export const FocusEvents = Extension.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    FocusEvents: typeof FocusEvents,
-  }
-}

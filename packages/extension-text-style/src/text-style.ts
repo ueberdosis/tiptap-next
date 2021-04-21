@@ -6,15 +6,24 @@ import {
 } from '@tiptap/core'
 
 export interface TextStyleOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
-export const TextStyle = Mark.create({
+declare module '@tiptap/core' {
+  interface Commands {
+    textStyle: {
+      /**
+       * Remove spans without inline style attributes.
+       */
+      removeEmptyTextStyle: () => Command,
+    }
+  }
+}
+
+export const TextStyle = Mark.create<TextStyleOptions>({
   name: 'textStyle',
 
-  defaultOptions: <TextStyleOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -41,10 +50,7 @@ export const TextStyle = Mark.create({
 
   addCommands() {
     return {
-      /**
-       * Remove spans without inline style attributes.
-       */
-      removeEmptyTextStyle: (): Command => ({ state, commands }) => {
+      removeEmptyTextStyle: () => ({ state, commands }) => {
         const attributes = getMarkAttributes(state, this.type)
         const hasStyles = Object.entries(attributes).every(([, value]) => !!value)
 
@@ -58,9 +64,3 @@ export const TextStyle = Mark.create({
   },
 
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    TextStyle: typeof TextStyle,
-  }
-}

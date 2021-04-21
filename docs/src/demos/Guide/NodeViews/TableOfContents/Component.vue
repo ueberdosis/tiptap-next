@@ -7,20 +7,23 @@
         v-for="(heading, index) in headings"
         :key="index"
       >
-        {{ heading.text }}
+        <a :href="`#${heading.id}`">
+          {{ heading.text }}
+        </a>
       </li>
     </ul>
   </node-view-wrapper>
 </template>
 
 <script>
+import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-2'
+
 export default {
-  props: {
-    editor: {
-      type: Object,
-      required: true,
-    },
+  components: {
+    NodeViewWrapper,
   },
+
+  props: nodeViewProps,
 
   data() {
     return {
@@ -31,15 +34,30 @@ export default {
   methods: {
     handleUpdate() {
       const headings = []
+      const transaction = this.editor.state.tr
 
-      this.editor.state.doc.descendants(node => {
+      this.editor.state.doc.descendants((node, pos) => {
         if (node.type.name === 'heading') {
+          const id = `heading-${headings.length + 1}`
+
+          if (node.attrs.id !== id) {
+            transaction.setNodeMarkup(pos, undefined, {
+              ...node.attrs,
+              id,
+            })
+          }
+
           headings.push({
             level: node.attrs.level,
             text: node.textContent,
+            id,
           })
         }
       })
+
+      transaction.setMeta('preventUpdate', true)
+
+      this.editor.view.dispatch(transaction)
 
       this.headings = headings
     },
@@ -47,14 +65,10 @@ export default {
 
   mounted() {
     this.editor.on('update', this.handleUpdate)
-    this.handleUpdate()
+    this.$nextTick(this.handleUpdate)
   },
 }
 </script>
-
-<style>
-
-</style>
 
 <style lang="scss">
 /* Basic editor styles */
@@ -78,7 +92,7 @@ export default {
 
     &::before {
       display: block;
-      content: "In this document";
+      content: "Table of Contents";
       font-weight: 700;
       letter-spacing: 0.025rem;
       font-size: 0.75rem;
@@ -88,6 +102,10 @@ export default {
   }
 
   &__item {
+    a:hover {
+      opacity: 0.5;
+    }
+
     &--3 {
       padding-left: 1rem;
     }

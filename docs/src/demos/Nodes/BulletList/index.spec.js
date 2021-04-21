@@ -1,12 +1,12 @@
-context('/api/nodes/bullet-list', () => {
+context('/demos/Nodes/BulletList', () => {
   before(() => {
-    cy.visit('/api/nodes/bullet-list')
+    cy.visit('/demos/Nodes/BulletList')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -31,7 +31,7 @@ context('/api/nodes/bullet-list', () => {
     cy.get('.ProseMirror ul li')
       .should('not.exist')
 
-    cy.get('.demo__preview button:nth-child(1)')
+    cy.get('button:nth-child(1)')
       .click()
 
     cy.get('.ProseMirror')
@@ -47,14 +47,14 @@ context('/api/nodes/bullet-list', () => {
     cy.get('.ProseMirror ul')
       .should('not.exist')
 
-    cy.get('.demo__preview button:nth-child(1)')
+    cy.get('button:nth-child(1)')
       .click()
 
     cy.get('.ProseMirror')
       .find('ul')
       .should('contain', 'Example Text')
 
-    cy.get('.demo__preview button:nth-child(1)')
+    cy.get('button:nth-child(1)')
       .click()
 
     cy.get('.ProseMirror ul')

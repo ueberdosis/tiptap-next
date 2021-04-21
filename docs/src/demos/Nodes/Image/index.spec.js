@@ -1,12 +1,12 @@
-context('/api/nodes/image', () => {
+context('/demos/Nodes/Image', () => {
   before(() => {
-    cy.visit('/api/nodes/image')
+    cy.visit('/demos/Nodes/Image')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -14,7 +14,7 @@ context('/api/nodes/image', () => {
     cy.window().then(win => {
       cy.stub(win, 'prompt').returns('foobar.png')
 
-      cy.get('.demo__preview button:first')
+      cy.get('button:first')
         .click()
 
       cy.window().its('prompt').should('be.called')

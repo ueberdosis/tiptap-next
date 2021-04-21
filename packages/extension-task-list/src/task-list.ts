@@ -1,15 +1,24 @@
 import { Command, Node, mergeAttributes } from '@tiptap/core'
 
 export interface TaskListOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
-export const TaskList = Node.create({
+declare module '@tiptap/core' {
+  interface Commands {
+    taskList: {
+      /**
+       * Toggle a task list
+       */
+      toggleTaskList: () => Command,
+    }
+  }
+}
+
+export const TaskList = Node.create<TaskListOptions>({
   name: 'taskList',
 
-  defaultOptions: <TaskListOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -32,10 +41,7 @@ export const TaskList = Node.create({
 
   addCommands() {
     return {
-      /**
-       * Toggle a task list
-       */
-      toggleTaskList: (): Command => ({ commands }) => {
+      toggleTaskList: () => ({ commands }) => {
         return commands.toggleList('taskList', 'taskItem')
       },
     }
@@ -43,13 +49,7 @@ export const TaskList = Node.create({
 
   addKeyboardShortcuts() {
     return {
-      'Mod-Shift-l': () => this.editor.commands.toggleTaskList(),
+      'Mod-Shift-9': () => this.editor.commands.toggleTaskList(),
     }
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    TaskList: typeof TaskList,
-  }
-}

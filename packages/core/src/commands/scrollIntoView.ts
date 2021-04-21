@@ -1,9 +1,17 @@
-import { Command } from '../types'
+import { Command, RawCommands } from '../types'
 
-/**
- * Scroll the selection into view.
- */
-export const scrollIntoView = (): Command => ({ tr, dispatch }) => {
+declare module '@tiptap/core' {
+  interface Commands {
+    scrollIntoView: {
+      /**
+       * Scroll the selection into view.
+       */
+      scrollIntoView: () => Command,
+    }
+  }
+}
+
+export const scrollIntoView: RawCommands['scrollIntoView'] = () => ({ tr, dispatch }) => {
   if (dispatch) {
     tr.scrollIntoView()
   }

@@ -7,17 +7,26 @@ import {
 
 export interface ImageOptions {
   inline: boolean,
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    image: {
+      /**
+       * Add an image
+       */
+      setImage: (options: { src: string, alt?: string, title?: string }) => Command,
+    }
+  }
 }
 
 export const inputRegex = /!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/
 
-export const Image = Node.create({
+export const Image = Node.create<ImageOptions>({
   name: 'image',
 
-  defaultOptions: <ImageOptions>{
+  defaultOptions: {
     inline: false,
     HTMLAttributes: {},
   },
@@ -60,10 +69,7 @@ export const Image = Node.create({
 
   addCommands() {
     return {
-      /**
-       * Add an image
-       */
-      setImage: (options: { src: string, alt?: string, title?: string }): Command => ({ tr, dispatch }) => {
+      setImage: options => ({ tr, dispatch }) => {
         const { selection } = tr
         const node = this.type.create(options)
 
@@ -86,9 +92,3 @@ export const Image = Node.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Image: typeof Image,
-  }
-}

@@ -9,8 +9,7 @@
 </template>
 
 <script>
-import { Editor } from '@tiptap/core'
-import { EditorContent } from '@tiptap/vue'
+import { Editor, EditorContent } from '@tiptap/vue-2'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -62,3 +61,27 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+/* Basic editor styles */
+.ProseMirror {
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  pre {
+    background: #0D0D0D;
+    color: #FFF;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+
+    code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+  }
+}
+</style>
