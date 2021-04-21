@@ -1,9 +1,17 @@
-import { Command } from '../types'
+import { Command, RawCommands } from '../types'
 
-/**
- * Removes focus from the editor.
- */
-export const blur = (): Command => ({ view }) => {
+declare module '@tiptap/core' {
+  interface Commands {
+    blur: {
+      /**
+       * Removes focus from the editor.
+       */
+      blur: () => Command,
+    }
+  }
+}
+
+export const blur: RawCommands['blur'] = () => ({ view }) => {
   const element = view.dom as HTMLElement
 
   element.blur()

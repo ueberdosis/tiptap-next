@@ -7,7 +7,7 @@ Unlike many other editors, tiptap is based on a [schema](https://prosemirror.net
 
 This schema is *very* strict. You can’t use any HTML element or attribute that is not defined in your schema.
 
-Let me give you one example: If you paste something like `This is <strong>important</strong>` into tiptap, don’t have any extension that handles `strong` tags registered, you’ll only see `This is important` – without the strong tags.
+Let me give you one example: If you paste something like `This is <strong>important</strong>` into tiptap, but don’t have any extension that handles `strong` tags, you’ll only see `This is important` – without the strong tags.
 
 ## How a schema looks like
 When you’ll work with the provided extensions only, you don’t have to care that much about the schema. If you’re building your own extensions, it’s probably helpful to understand how the schema works. Let’s look at the most simple schema for a typical ProseMirror editor:
@@ -32,7 +32,7 @@ When you’ll work with the provided extensions only, you don’t have to care t
 }
 ```
 
-We register three nodes here. `document`, `paragraph` and `text`. `document` is the root node which allows one or more block nodes as children (`content: 'block+'`). Since `paragraph` is in the group of block nodes (`group: 'block'`) our document can only contain paragraphs. Our paragraphs allow zero or more inline nodes as children (`content: 'inline*'`) so there can only be `text` in it. `parseDOM` defines how a node can be parsed from pasted HTML. `toDOM` defines how it will be rendered in the DOM.
+We register three nodes here. `doc`, `paragraph` and `text`. `doc` is the root node which allows one or more block nodes as children (`content: 'block+'`). Since `paragraph` is in the group of block nodes (`group: 'block'`) our document can only contain paragraphs. Our paragraphs allow zero or more inline nodes as children (`content: 'inline*'`) so there can only be `text` in it. `parseDOM` defines how a node can be parsed from pasted HTML. `toDOM` defines how it will be rendered in the DOM.
 
 In tiptap every node, mark and extension is living in its own file. This allows us to split the logic. Under the hood the whole schema will be merged together:
 
@@ -41,7 +41,7 @@ In tiptap every node, mark and extension is living in its own file. This allows 
 import { Node } from '@tiptap/core'
 
 const Document = Node.create({
-  name: 'document',
+  name: 'doc',
   topNode: true,
   content: 'block+',
 })
@@ -145,6 +145,17 @@ Node.create({
 })
 ```
 
+For some cases where you want features that aren’t available in marks, for example a node view, try if an inline node would work:
+
+```js
+Node.create({
+  name: 'customInlineNode',
+  group: 'inline',
+  inline: true,
+  content: 'text*',
+})
+```
+
 #### Atom
 Nodes with `atom: true` aren’t directly editable and should be treated as a single unit. It’s not so likely to use that in a editor context, but this is how it would look like:
 
@@ -152,6 +163,15 @@ Nodes with `atom: true` aren’t directly editable and should be treated as a si
 Node.create({
   atom: true,
 })
+```
+
+One example is the [`Mention`](/api/nodes/mention) extension, which somehow looks like text, but behaves more like a single unit. As this doesn’t have editable text content, it’s empty when you copy such node. Good news though, you can control that. Here is the example from the [`Mention`](/api/nodes/mention) extension:
+
+```js
+// Used to convert an atom node to plain text
+renderText({ node }) {
+  return `@${node.attrs.id}`
+},
 ```
 
 #### Selectable
@@ -198,6 +218,24 @@ For nodes that should fence the cursor for regular editing operations like backs
 ```js
 Node.create({
   isolating: true,
+})
+```
+
+#### Allow gap cursor
+The [`Gapcursor`](/api/extensions/gapcursor) extension registers a new schema attribute to control if gap cursors are allowed everywhere in that node.
+
+```js
+Node.create({
+  allowGapCursor: false,
+})
+```
+
+#### Table roles
+The [`Table`](/api/nodes/table) extension registers a new schema attribute to configure which role an Node has. Allowed values are `table`, `row`, `cell`, and `header_cell`.
+
+```js
+Node.create({
+  tableRole: 'cell',
 })
 ```
 

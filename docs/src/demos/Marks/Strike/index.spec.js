@@ -1,12 +1,12 @@
-context('/api/marks/strike', () => {
+context('/demos/Marks/Strike', () => {
   before(() => {
-    cy.visit('/api/marks/strike')
+    cy.visit('/demos/Marks/Strike')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -39,7 +39,7 @@ context('/api/marks/strike', () => {
   })
 
   it('the button should strike the selected text', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -48,13 +48,13 @@ context('/api/marks/strike', () => {
   })
 
   it('the button should toggle the selected text striked', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
       .type('{selectall}')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')

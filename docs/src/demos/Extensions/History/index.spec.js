@@ -1,6 +1,6 @@
-context('/api/extensions/history', () => {
+context('/demos/Extensions/History', () => {
   before(() => {
-    cy.visit('/api/extensions/history')
+    cy.visit('/demos/Extensions/History')
   })
 
   beforeEach(() => {
@@ -13,7 +13,7 @@ context('/api/extensions/history', () => {
     cy.get('.ProseMirror')
       .should('contain', 'Mistake')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -30,13 +30,13 @@ context('/api/extensions/history', () => {
     cy.get('.ProseMirror')
       .should('contain', 'Mistake')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
       .should('not.contain', 'Mistake')
 
-    cy.get('.demo__preview button:nth-child(2)')
+    cy.get('button:nth-child(2)')
       .click()
 
     cy.get('.ProseMirror')

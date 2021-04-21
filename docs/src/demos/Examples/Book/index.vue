@@ -70,7 +70,8 @@
 </template>
 
 <script>
-import { Editor, EditorContent, defaultExtensions } from '@tiptap/vue-starter-kit'
+import { Editor, EditorContent } from '@tiptap/vue-2'
+import { defaultExtensions } from '@tiptap/starter-kit'
 import { content } from './content.js'
 
 export default {
@@ -88,6 +89,11 @@ export default {
     this.editor = new Editor({
       extensions: defaultExtensions(),
       content,
+      editorProps: {
+        attributes: {
+          spellcheck: 'false',
+        },
+      },
     })
   },
 
@@ -109,6 +115,15 @@ export default {
     padding: 0 1rem;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
   code {
     background-color: rgba(#616161, 0.1);
     color: #616161;
@@ -123,6 +138,7 @@ export default {
 
     code {
       color: inherit;
+      padding: 0;
       background: none;
       font-size: 0.8rem;
     }

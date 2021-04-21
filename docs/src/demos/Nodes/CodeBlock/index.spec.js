@@ -1,12 +1,12 @@
-context('/api/nodes/code-block', () => {
+context('/demos/Nodes/CodeBlock', () => {
   before(() => {
-    cy.visit('/api/nodes/code-block')
+    cy.visit('/demos/Nodes/CodeBlock')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -25,7 +25,7 @@ context('/api/nodes/code-block', () => {
   })
 
   it('the button should make the selected line a code block', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -34,7 +34,7 @@ context('/api/nodes/code-block', () => {
   })
 
   it('the button should toggle the code block', () => {
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -44,7 +44,7 @@ context('/api/nodes/code-block', () => {
     cy.get('.ProseMirror')
       .type('{selectall}')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror pre')
@@ -123,6 +123,63 @@ context('/api/nodes/code-block', () => {
         .type('~~~js Code')
         .find('pre>code.language-js')
         .should('contain', 'Code')
+    })
+  })
+
+  it('reverts the markdown shortcut when pressing backspace', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.clearContent()
+
+      cy.get('.ProseMirror')
+        .type('``` {backspace}')
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
+    })
+  })
+
+  it('removes the code block when pressing backspace', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.clearContent()
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
+
+      cy.get('.ProseMirror')
+        .type('Paragraph{enter}``` A{backspace}{backspace}')
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
+    })
+  })
+
+  it('removes the code block when pressing backspace, even with blank lines', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.clearContent()
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
+
+      cy.get('.ProseMirror')
+        .type('Paragraph{enter}{enter}``` A{backspace}{backspace}')
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
+    })
+  })
+
+  it('removes the code block when pressing backspace, even at start of document', () => {
+    cy.get('.ProseMirror').then(([{ editor }]) => {
+      editor.commands.clearContent()
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
+
+      cy.get('.ProseMirror')
+        .type('``` A{leftArrow}{backspace}')
+
+      cy.get('.ProseMirror pre')
+        .should('not.exist')
     })
   })
 })

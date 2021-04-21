@@ -1,198 +1,270 @@
 import { Plugin, Transaction } from 'prosemirror-state'
 import { InputRule } from 'prosemirror-inputrules'
 import { Editor } from './Editor'
-import { GlobalAttributes } from './types'
+import { Node } from './Node'
+import { Mark } from './Mark'
+import mergeDeep from './utilities/mergeDeep'
+import {
+  GlobalAttributes,
+  RawCommands,
+  ParentConfig,
+  KeyboardShortcutCommand,
+} from './types'
+import { ExtensionConfig } from '.'
 
-export interface ExtensionConfig<Options = any, Commands = {}> {
-  /**
-   * Name
-   */
-  name: string,
+declare module '@tiptap/core' {
+  interface ExtensionConfig<Options = any> {
+    [key: string]: any;
 
-  /**
-   * Default options
-   */
-  defaultOptions?: Options,
+    /**
+     * Name
+     */
+    name: string,
 
-  /**
-   * Global attributes
-   */
-  addGlobalAttributes?: (this: {
-    options: Options,
-  }) => GlobalAttributes | {},
+    /**
+     * Priority
+     */
+    priority?: number,
 
-  /**
-   * Commands
-   */
-  addCommands?: (this: {
-    options: Options,
-    editor: Editor,
-  }) => Commands,
+    /**
+     * Default options
+     */
+    defaultOptions?: Options,
 
-  /**
-   * Keyboard shortcuts
-   */
-  addKeyboardShortcuts?: (this: {
-    options: Options,
-    editor: Editor,
-  }) => {
-    [key: string]: any
-  },
+    /**
+     * Global attributes
+     */
+    addGlobalAttributes?: (this: {
+      name: string,
+      options: Options,
+      parent: ParentConfig<ExtensionConfig<Options>>['addGlobalAttributes'],
+    }) => GlobalAttributes | {},
 
-  /**
-   * Input rules
-   */
-  addInputRules?: (this: {
-    options: Options,
-    editor: Editor,
-  }) => InputRule[],
-
-  /**
-   * Paste rules
-   */
-  addPasteRules?: (this: {
-    options: Options,
-    editor: Editor,
-  }) => Plugin[],
-
-  /**
-   * ProseMirror plugins
-   */
-  addProseMirrorPlugins?: (this: {
-    options: Options,
-    editor: Editor,
-  }) => Plugin[],
-
-  /**
-   * The editor is ready.
-   */
-  onCreate?: ((this: {
-    options: Options,
-    editor: Editor,
-  }) => void) | null,
-
-  /**
-   * The content has changed.
-   */
-  onUpdate?: ((this: {
-    options: Options,
-    editor: Editor,
-  }) => void) | null,
-
-  /**
-   * The selection has changed.
-   */
-  onSelection?: ((this: {
-    options: Options,
-    editor: Editor,
-  }) => void) | null,
-
-  /**
-   * The editor state has changed.
-   */
-  onTransaction?: ((
-    this: {
+    /**
+     * Raw
+     */
+    addCommands?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
-    },
-    props: {
-      transaction: Transaction,
-    },
-  ) => void) | null,
+      parent: ParentConfig<ExtensionConfig<Options>>['addCommands'],
+    }) => Partial<RawCommands>,
 
-  /**
-   * The editor is focused.
-   */
-  onFocus?: ((
-    this: {
+    /**
+     * Keyboard shortcuts
+     */
+    addKeyboardShortcuts?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addKeyboardShortcuts'],
+    }) => {
+      [key: string]: KeyboardShortcutCommand,
     },
-    props: {
-      event: FocusEvent,
-    },
-  ) => void) | null,
 
-  /**
-   * The editor isn’t focused anymore.
-   */
-  onBlur?: ((
-    this: {
+    /**
+     * Input rules
+     */
+    addInputRules?: (this: {
+      name: string,
       options: Options,
       editor: Editor,
-    },
-    props: {
-      event: FocusEvent,
-    },
-  ) => void) | null,
+      parent: ParentConfig<ExtensionConfig<Options>>['addInputRules'],
+    }) => InputRule[],
 
-  /**
-   * The editor is destroyed.
-   */
-  onDestroy?: ((this: {
-    options: Options,
-    editor: Editor,
-  }) => void) | null,
+    /**
+     * Paste rules
+     */
+    addPasteRules?: (this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addPasteRules'],
+    }) => Plugin[],
+
+    /**
+     * ProseMirror plugins
+     */
+    addProseMirrorPlugins?: (this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['addProseMirrorPlugins'],
+    }) => Plugin[],
+
+    /**
+     * Extend Node Schema
+     */
+    extendNodeSchema?: ((
+      this: {
+        name: string,
+        options: Options,
+        parent: ParentConfig<ExtensionConfig<Options>>['extendNodeSchema'],
+      },
+      extension: Node,
+    ) => Record<string, any>) | null,
+
+    /**
+     * Extend Mark Schema
+     */
+    extendMarkSchema?: ((
+      this: {
+        name: string,
+        options: Options,
+        parent: ParentConfig<ExtensionConfig<Options>>['extendMarkSchema'],
+      },
+      extension: Mark,
+    ) => Record<string, any>) | null,
+
+    /**
+     * The editor is not ready yet.
+     */
+    onBeforeCreate?: ((this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onBeforeCreate'],
+    }) => void) | null,
+
+    /**
+     * The editor is ready.
+     */
+    onCreate?: ((this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onCreate'],
+    }) => void) | null,
+
+    /**
+     * The content has changed.
+     */
+    onUpdate?: ((this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onUpdate'],
+    }) => void) | null,
+
+    /**
+     * The selection has changed.
+     */
+    onSelectionUpdate?: ((this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onSelectionUpdate'],
+    }) => void) | null,
+
+    /**
+     * The editor state has changed.
+     */
+    onTransaction?: ((
+      this: {
+        name: string,
+        options: Options,
+        editor: Editor,
+        parent: ParentConfig<ExtensionConfig<Options>>['onTransaction'],
+      },
+      props: {
+        transaction: Transaction,
+      },
+    ) => void) | null,
+
+    /**
+     * The editor is focused.
+     */
+    onFocus?: ((
+      this: {
+        name: string,
+        options: Options,
+        editor: Editor,
+        parent: ParentConfig<ExtensionConfig<Options>>['onFocus'],
+      },
+      props: {
+        event: FocusEvent,
+      },
+    ) => void) | null,
+
+    /**
+     * The editor isn’t focused anymore.
+     */
+    onBlur?: ((
+      this: {
+        name: string,
+        options: Options,
+        editor: Editor,
+        parent: ParentConfig<ExtensionConfig<Options>>['onBlur'],
+      },
+      props: {
+        event: FocusEvent,
+      },
+    ) => void) | null,
+
+    /**
+     * The editor is destroyed.
+     */
+    onDestroy?: ((this: {
+      name: string,
+      options: Options,
+      editor: Editor,
+      parent: ParentConfig<ExtensionConfig<Options>>['onDestroy'],
+    }) => void) | null,
+  }
 }
 
-export class Extension<Options = any, Commands = any> {
+export class Extension<Options = any> {
   type = 'extension'
 
-  config: Required<ExtensionConfig> = {
-    name: 'extension',
+  name = 'extension'
+
+  parent: Extension | null = null
+
+  child: Extension | null = null
+
+  options: Options
+
+  config: ExtensionConfig = {
+    name: this.name,
+    priority: 100,
     defaultOptions: {},
-    addGlobalAttributes: () => [],
-    addCommands: () => ({}),
-    addKeyboardShortcuts: () => ({}),
-    addInputRules: () => [],
-    addPasteRules: () => [],
-    addProseMirrorPlugins: () => [],
-    onCreate: null,
-    onUpdate: null,
-    onSelection: null,
-    onTransaction: null,
-    onFocus: null,
-    onBlur: null,
-    onDestroy: null,
   }
 
-  options!: Options
-
-  constructor(config: ExtensionConfig<Options, Commands>) {
+  constructor(config: Partial<ExtensionConfig<Options>> = {}) {
     this.config = {
       ...this.config,
       ...config,
     }
 
+    this.name = this.config.name
     this.options = this.config.defaultOptions
   }
 
-  static create<O, C>(config: ExtensionConfig<O, C>) {
-    return new Extension<O, C>(config)
+  static create<O>(config: Partial<ExtensionConfig<O>> = {}) {
+    return new Extension<O>(config)
   }
 
-  configure(options?: Partial<Options>) {
-    return Extension
-      .create<Options, Commands>(this.config as ExtensionConfig<Options, Commands>)
-      .#configure({
-        ...this.config.defaultOptions,
-        ...options,
-      })
-  }
-
-  #configure = (options: Partial<Options>) => {
-    this.options = {
-      ...this.config.defaultOptions,
-      ...options,
-    }
+  configure(options: Partial<Options> = {}) {
+    this.options = mergeDeep(this.options, options) as Options
 
     return this
   }
 
-  extend<ExtendedOptions = Options, ExtendedCommands = Commands>(extendedConfig: Partial<ExtensionConfig<ExtendedOptions, ExtendedCommands>>) {
-    return new Extension<ExtendedOptions, ExtendedCommands>({
-      ...this.config,
-      ...extendedConfig,
-    } as ExtensionConfig<ExtendedOptions, ExtendedCommands>)
+  extend<ExtendedOptions = Options>(extendedConfig: Partial<ExtensionConfig<ExtendedOptions>> = {}) {
+    const extension = new Extension<ExtendedOptions>(extendedConfig)
+
+    extension.parent = this
+
+    this.child = extension
+
+    extension.name = extendedConfig.name
+      ? extendedConfig.name
+      : extension.parent.name
+
+    extension.options = extendedConfig.defaultOptions
+      ? extendedConfig.defaultOptions
+      : extension.parent.options
+
+    return extension
   }
 }

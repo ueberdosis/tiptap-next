@@ -2,17 +2,26 @@ import { Command, Node, mergeAttributes } from '@tiptap/core'
 import { wrappingInputRule } from 'prosemirror-inputrules'
 
 export interface OrderedListOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
+}
+
+declare module '@tiptap/core' {
+  interface Commands {
+    orderedList: {
+      /**
+       * Toggle an ordered list
+       */
+      toggleOrderedList: () => Command,
+    }
+  }
 }
 
 export const inputRegex = /^(\d+)\.\s$/
 
-export const OrderedList = Node.create({
+export const OrderedList = Node.create<OrderedListOptions>({
   name: 'orderedList',
 
-  defaultOptions: <OrderedListOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -51,10 +60,7 @@ export const OrderedList = Node.create({
 
   addCommands() {
     return {
-      /**
-       * Toggle an ordered list
-       */
-      toggleOrderedList: (): Command => ({ commands }) => {
+      toggleOrderedList: () => ({ commands }) => {
         return commands.toggleList('orderedList', 'listItem')
       },
     }
@@ -77,9 +83,3 @@ export const OrderedList = Node.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    OrderedList: typeof OrderedList,
-  }
-}

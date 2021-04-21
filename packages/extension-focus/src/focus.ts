@@ -4,15 +4,15 @@ import { DecorationSet, Decoration } from 'prosemirror-view'
 
 export interface FocusOptions {
   className: string,
-  nested: boolean,
+  mode: 'all' | 'deepest' | 'shallowest',
 }
 
-export const FocusClasses = Extension.create({
+export const FocusClasses = Extension.create<FocusOptions>({
   name: 'focus',
 
-  defaultOptions: <FocusOptions>{
+  defaultOptions: {
     className: 'has-focus',
-    nested: false,
+    mode: 'all',
   },
 
   addProseMirrorPlugins() {
@@ -29,17 +29,51 @@ export const FocusClasses = Extension.create({
               return DecorationSet.create(doc, [])
             }
 
-            doc.descendants((node, pos) => {
-              const hasAnchor = anchor >= pos && anchor <= (pos + node.nodeSize)
+            // Maximum Levels
+            let maxLevels = 0
 
-              if (hasAnchor && !node.isText) {
-                const decoration = Decoration.node(pos, pos + node.nodeSize, {
-                  class: this.options.className,
-                })
-                decorations.push(decoration)
+            if (this.options.mode === 'deepest') {
+              doc.descendants((node, pos) => {
+                if (node.isText) {
+                  return
+                }
+
+                const isCurrent = anchor >= pos && anchor <= (pos + node.nodeSize - 1)
+
+                if (!isCurrent) {
+                  return false
+                }
+
+                maxLevels += 1
+              })
+            }
+
+            // Loop through current
+            let currentLevel = 0
+
+            doc.descendants((node, pos) => {
+              if (node.isText) {
+                return false
               }
 
-              return this.options.nested
+              const isCurrent = anchor >= pos && anchor <= (pos + node.nodeSize - 1)
+
+              if (!isCurrent) {
+                return false
+              }
+
+              currentLevel += 1
+
+              const outOfScope = (this.options.mode === 'deepest' && maxLevels - currentLevel > 0)
+                || (this.options.mode === 'shallowest' && currentLevel > 1)
+
+              if (outOfScope) {
+                return this.options.mode === 'deepest'
+              }
+
+              decorations.push(Decoration.node(pos, pos + node.nodeSize, {
+                class: this.options.className,
+              }))
             })
 
             return DecorationSet.create(doc, decorations)
@@ -49,9 +83,3 @@ export const FocusClasses = Extension.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    FocusClasses: typeof FocusClasses,
-  }
-}

@@ -1,12 +1,12 @@
-context('/api/nodes/blockquote', () => {
+context('/demos/Nodes/Blockquote', () => {
   before(() => {
-    cy.visit('/api/nodes/blockquote')
+    cy.visit('/demos/Nodes/Blockquote')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -28,7 +28,7 @@ context('/api/nodes/blockquote', () => {
     cy.get('.ProseMirror blockquote')
       .should('not.exist')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -39,10 +39,10 @@ context('/api/nodes/blockquote', () => {
   it('the button should wrap all nodes in one blockquote', () => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p><p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -54,7 +54,7 @@ context('/api/nodes/blockquote', () => {
     cy.get('.ProseMirror blockquote')
       .should('not.exist')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror')
@@ -64,7 +64,7 @@ context('/api/nodes/blockquote', () => {
     cy.get('.ProseMirror')
       .type('{selectall}')
 
-    cy.get('.demo__preview button:first')
+    cy.get('button:first')
       .click()
 
     cy.get('.ProseMirror blockquote')

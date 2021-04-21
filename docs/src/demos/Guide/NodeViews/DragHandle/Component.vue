@@ -10,6 +10,19 @@
   </node-view-wrapper>
 </template>
 
+<script>
+import { NodeViewWrapper, NodeViewContent, nodeViewProps } from '@tiptap/vue-2'
+
+export default {
+  props: nodeViewProps,
+
+  components: {
+    NodeViewWrapper,
+    NodeViewContent,
+  },
+}
+</script>
+
 <style lang="scss" scoped>
 .draggable-item {
   display: flex;
