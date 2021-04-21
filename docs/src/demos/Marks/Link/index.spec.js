@@ -1,12 +1,12 @@
-context('/api/marks/link', () => {
+context('/demos/Marks/Link', () => {
   before(() => {
-    cy.visit('/api/marks/link')
+    cy.visit('/demos/Marks/Link')
   })
 
   beforeEach(() => {
     cy.get('.ProseMirror').then(([{ editor }]) => {
       editor.commands.setContent('<p>Example Text</p>')
-      editor.commands.selectAll()
+      cy.get('.ProseMirror').type('{selectall}')
     })
   })
 
@@ -35,7 +35,7 @@ context('/api/marks/link', () => {
     cy.window().then(win => {
       cy.stub(win, 'prompt').returns('https://tiptap.dev')
 
-      cy.get('.demo__preview button:first')
+      cy.get('button:first')
         .click()
 
       cy.window().its('prompt').should('be.called')

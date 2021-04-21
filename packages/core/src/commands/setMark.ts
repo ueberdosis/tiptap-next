@@ -1,14 +1,22 @@
 import { MarkType } from 'prosemirror-model'
-import { Command } from '../types'
+import { Command, RawCommands } from '../types'
 import getMarkType from '../helpers/getMarkType'
 import getMarkAttributes from '../helpers/getMarkAttributes'
 
-/**
- * Add a mark with new attributes.
- */
-export const setMark = (typeOrName: string | MarkType, attributes?: {}): Command => ({ tr, state, dispatch }) => {
+declare module '@tiptap/core' {
+  interface Commands {
+    setMark: {
+      /**
+       * Add a mark with new attributes.
+       */
+      setMark: (typeOrName: string | MarkType, attributes?: Record<string, any>) => Command,
+    }
+  }
+}
+
+export const setMark: RawCommands['setMark'] = (typeOrName, attributes = {}) => ({ tr, state, dispatch }) => {
   const { selection } = tr
-  const { from, to, empty } = selection
+  const { empty, ranges } = selection
   const type = getMarkType(typeOrName, state.schema)
   const oldAttributes = getMarkAttributes(state, type)
   const newAttributes = {
@@ -20,7 +28,9 @@ export const setMark = (typeOrName: string | MarkType, attributes?: {}): Command
     if (empty) {
       tr.addStoredMark(type.create(newAttributes))
     } else {
-      tr.addMark(from, to, type.create(newAttributes))
+      ranges.forEach(range => {
+        tr.addMark(range.$from.pos, range.$to.pos, type.create(newAttributes))
+      })
     }
   }
 

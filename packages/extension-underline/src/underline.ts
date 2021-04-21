@@ -1,15 +1,32 @@
 import { Command, Mark, mergeAttributes } from '@tiptap/core'
 
 export interface UnderlineOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
-export const Underline = Mark.create({
+declare module '@tiptap/core' {
+  interface Commands {
+    underline: {
+      /**
+       * Set an underline mark
+       */
+      setUnderline: () => Command,
+      /**
+       * Toggle an underline mark
+       */
+      toggleUnderline: () => Command,
+      /**
+       * Unset an underline mark
+       */
+      unsetUnderline: () => Command,
+    }
+  }
+}
+
+export const Underline = Mark.create<UnderlineOptions>({
   name: 'underline',
 
-  defaultOptions: <UnderlineOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -19,7 +36,9 @@ export const Underline = Mark.create({
         tag: 'u',
       },
       {
-        style: 'text-decoration=underline',
+        style: 'text-decoration',
+        consuming: false,
+        getAttrs: style => ((style as string).includes('underline') ? {} : false),
       },
     ]
   },
@@ -30,22 +49,13 @@ export const Underline = Mark.create({
 
   addCommands() {
     return {
-      /**
-       * Set an underline mark
-       */
-      setUnderline: (): Command => ({ commands }) => {
+      setUnderline: () => ({ commands }) => {
         return commands.setMark('underline')
       },
-      /**
-       * Toggle an underline mark
-       */
-      toggleUnderline: (): Command => ({ commands }) => {
+      toggleUnderline: () => ({ commands }) => {
         return commands.toggleMark('underline')
       },
-      /**
-       * Unset an underline mark
-       */
-      unsetUnderline: (): Command => ({ commands }) => {
+      unsetUnderline: () => ({ commands }) => {
         return commands.unsetMark('underline')
       },
     }
@@ -57,9 +67,3 @@ export const Underline = Mark.create({
     }
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    Underline: typeof Underline,
-  }
-}

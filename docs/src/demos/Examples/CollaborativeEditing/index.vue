@@ -1,31 +1,28 @@
 <template>
-  <div>
-    <div class="editor" v-if="editor">
-      <menu-bar class="editor__menu" :editor="editor" />
-      <editor-content class="editor__content" :editor="editor" />
-      <div class="editor__bottom-bar">
-        <div :class="`editor__status editor__status--${status}`">
-          {{ status }}
-          <template v-if="status === 'connected'">
-            as {{ currentUser.name }},
-            {{ users.length }} user{{ users.length === 1 ? '' : 's' }} online
-          </template>
-        </div>
-        <div class="editor__actions">
-          <button @click="setName">
-            Set Name
-          </button>
-          <button @click="updateCurrentUser({ name: getRandomName() })">
-            Random Name
-          </button>
-        </div>
+  <div class="editor" v-if="editor">
+    <menu-bar class="editor__header" :editor="editor" />
+    <editor-content class="editor__content" :editor="editor" />
+    <div class="editor__footer">
+      <div :class="`editor__status editor__status--${status}`">
+        <template v-if="status === 'connected'">
+          {{ users.length }} user{{ users.length === 1 ? '' : 's' }} online
+        </template>
+        <template v-else>
+          offline
+        </template>
+      </div>
+      <div class="editor__name">
+        <button @click="setName">
+          {{ currentUser.name }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { Editor, EditorContent, defaultExtensions } from '@tiptap/vue-starter-kit'
+import { Editor, EditorContent } from '@tiptap/vue-2'
+import { defaultExtensions } from '@tiptap/starter-kit'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 import TaskList from '@tiptap/extension-task-list'
@@ -35,10 +32,6 @@ import * as Y from 'yjs'
 import { WebsocketProvider } from 'y-websocket'
 import { IndexeddbPersistence } from 'y-indexeddb'
 import MenuBar from './MenuBar.vue'
-
-const CustomTaskItem = TaskItem.extend({
-  content: 'paragraph',
-})
 
 const getRandomElement = list => {
   return list[Math.floor(Math.random() * list.length)]
@@ -71,14 +64,16 @@ export default {
       this.status = event.status
     })
 
+    window.ydoc = ydoc
+
     this.indexdb = new IndexeddbPersistence('tiptap-collaboration-example', ydoc)
 
     this.editor = new Editor({
       extensions: [
-        ...defaultExtensions().filter(extension => extension.config.name !== 'history'),
+        ...defaultExtensions().filter(extension => extension.name !== 'history'),
         Highlight,
         TaskList,
-        CustomTaskItem,
+        TaskItem,
         Collaboration.configure({
           document: ydoc,
         }),
@@ -117,13 +112,13 @@ export default {
 
     getRandomColor() {
       return getRandomElement([
-        '#A975FF',
-        '#FB5151',
-        '#FD9170',
-        '#FFCB6B',
-        '#68CEF8',
-        '#80CBC4',
-        '#9DEF8F',
+        '#958DF1',
+        '#F98181',
+        '#FBBC88',
+        '#FAF594',
+        '#70CFF8',
+        '#94FADB',
+        '#B9F18D',
       ])
     },
 
@@ -143,50 +138,51 @@ export default {
 
 <style lang="scss" scoped>
 .editor {
-  color: black;
-  background-color: white;
-  border: 1px solid rgba(black, 0.1);
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+  color: #0D0D0D;
+  background-color: $colorWhite;
+  border: 3px solid #0D0D0D;
+  border-radius: 0.75rem;
 
-  &__menu {
+  &__header {
     display: flex;
+    align-items: center;
+    flex: 0 0 auto;
     flex-wrap: wrap;
     padding: 0.25rem;
-    border-bottom: 1px solid rgba(black, 0.1);
+    border-bottom: 3px solid #0D0D0D;
   }
 
   &__content {
-    padding: 1rem;
-    max-height: 30rem;
-    overflow: auto;
-
-    &::-webkit-scrollbar-thumb {
-      background-color: rgba(black, 0.1);
-    }
+    padding: 1.25rem 1rem;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  &__bottom-bar {
+  &__footer {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     white-space: nowrap;
-    padding: 0.25rem 0 0.25rem 0.25rem;
-    border-top: 1px solid rgba(black, 0.1);
+    border-top: 3px solid #0D0D0D;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0D0D0D;
+    white-space: nowrap;
+    padding: 0.25rem 0.75rem;
   }
 
   /* Some information about the status */
   &__status {
     display: flex;
     align-items: center;
-    font-size: 13px;
-    font-weight: 500;
     border-radius: 5px;
-    margin-top: 1rem;
-    padding: 0.25rem 0.5rem;
-    color: rgba(black, 0.5);
-    white-space: nowrap;
 
     &::before {
       content: ' ';
@@ -194,35 +190,34 @@ export default {
       display: inline-block;
       width: 0.5rem;
       height: 0.5rem;
-      background: rgba(black, 0.5);
+      background: rgba(#0D0D0D, 0.5);
       border-radius: 50%;
       margin-right: 0.5rem;
     }
 
     &--connecting::before {
-      background: #FD9170;
+      background: #616161;
     }
 
     &--connected::before {
-      background: #9DEF8F;
+      background: #B9F18D;
     }
   }
 
-  &__actions {
+  &__name {
     button {
       background: none;
       border: none;
       font: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      color: rgba(black, 0.5);
-      border-radius: 0.25rem;
+      font-size: 12px;
+      font-weight: 600;
+      color: #0D0D0D;
+      border-radius: 0.4rem;
       padding: 0.25rem 0.5rem;
-      margin-right: 0.25rem;
 
       &:hover {
-        color: black;
-        background-color: rgba(black, 0.05);
+        color: #FFF;
+        background-color: #0D0D0D;
       }
     }
   }
@@ -230,27 +225,13 @@ export default {
 </style>
 
 <style lang="scss">
-/* A list of all available users */
-.collaboration-users {
-  margin-top: 0.5rem;
-
-  &__item {
-    display: inline-block;
-    border-radius: 5px;
-    padding: 0.25rem 0.5rem;
-    color: white;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-}
-
 /* Give a remote user a caret */
 .collaboration-cursor__caret {
   position: relative;
   margin-left: -1px;
   margin-right: -1px;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
+  border-left: 1px solid #0D0D0D;
+  border-right: 1px solid #0D0D0D;
   word-break: normal;
   pointer-events: none;
 }
@@ -260,12 +241,12 @@ export default {
   position: absolute;
   top: -1.4em;
   left: -1px;
-  font-size: 13px;
+  font-size: 12px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   line-height: normal;
   user-select: none;
-  color: black;
+  color: #0D0D0D;
   padding: 0.1rem 0.3rem;
   border-radius: 3px 3px 3px 0;
   white-space: nowrap;
@@ -282,6 +263,15 @@ export default {
     padding: 0 1rem;
   }
 
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
   code {
     background-color: rgba(#616161, 0.1);
     color: #616161;
@@ -296,9 +286,14 @@ export default {
 
     code {
       color: inherit;
+      padding: 0;
       background: none;
       font-size: 0.8rem;
     }
+  }
+
+  mark {
+    background-color: #FAF594;
   }
 
   img {
@@ -315,6 +310,12 @@ export default {
     border-left: 2px solid rgba(#0D0D0D, 0.1);
   }
 
+  hr {
+    border: none;
+    border-top: 2px solid rgba(#0D0D0D, 0.1);
+    margin: 2rem 0;
+  }
+
   ul[data-type="taskList"] {
     list-style: none;
     padding: 0;
@@ -323,7 +324,7 @@ export default {
       display: flex;
       align-items: center;
 
-      > input {
+      > label {
         flex: 0 0 auto;
         margin-right: 0.5rem;
       }

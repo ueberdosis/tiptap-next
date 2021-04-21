@@ -1,6 +1,6 @@
-context('/api/nodes/document', () => {
+context('/demos/Nodes/Document', () => {
   before(() => {
-    cy.visit('/api/nodes/document')
+    cy.visit('/demos/Nodes/Document')
   })
 
   beforeEach(() => {
@@ -14,7 +14,7 @@ context('/api/nodes/document', () => {
       const json = editor.getJSON()
 
       expect(json).to.deep.equal({
-        type: 'document',
+        type: 'doc',
         content: [
           {
             type: 'paragraph',

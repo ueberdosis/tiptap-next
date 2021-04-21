@@ -26,25 +26,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.content {
-  padding: 1rem 0 0;
+::v-deep {
+  /* Basic editor styles */
+  .ProseMirror {
+    > * + * {
+      margin-top: 0.75em;
+    }
 
-  h3 {
-    margin: 1rem 0 0.5rem;
+    code {
+      background-color: rgba(#616161, 0.1);
+      color: #616161;
+    }
   }
 
-  pre {
-    border-radius: 5px;
-    color: #333;
-  }
+  .content {
+    padding: 1rem 0 0;
 
-  code {
-    display: block;
-    white-space: pre-wrap;
-    font-size: 0.8rem;
-    padding: 0.75rem 1rem;
-    background-color:#e9ecef;
-    color: #495057;
+    h3 {
+      margin: 1rem 0 0.5rem;
+    }
+
+    pre {
+      border-radius: 5px;
+      color: #333;
+    }
+
+    code {
+      display: block;
+      white-space: pre-wrap;
+      font-size: 0.8rem;
+      padding: 0.75rem 1rem;
+      background-color:#e9ecef;
+      color: #495057;
+    }
   }
 }
 </style>

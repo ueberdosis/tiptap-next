@@ -1,4 +1,7 @@
 # Typography
+[![Version](https://img.shields.io/npm/v/@tiptap/extension-typography.svg?label=version)](https://www.npmjs.com/package/@tiptap/extension-typography)
+[![Downloads](https://img.shields.io/npm/dm/@tiptap/extension-typography.svg)](https://npmcharts.com/compare/@tiptap/extension-typography?minimal=true)
+
 This extension tries to help with common text patterns with the correct typographic character. Under the hood all rules are input rules.
 
 ## Installation
@@ -28,7 +31,7 @@ yarn add @tiptap/extension-typography
 | notEqual                | Converts `!=` to a not equal sign `≠`.                           |
 | laquo                   | Converts `<<` to left-pointing double angle quotation mark `«`.  |
 | raquo                   | Converts `>>` to right-pointing double angle quotation mark `»`. |
-| multiplication          | Converts `2 * 3` or `2x3` to a multiplcation sign `2×3™`.        |
+| multiplication          | Converts `2 * 3` or `2x3` to a multiplcation sign `2×3`.        |
 
 ## Keyboard shortcuts
 * `Backspace` reverts the applied input rule

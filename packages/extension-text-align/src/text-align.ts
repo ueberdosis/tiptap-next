@@ -6,10 +6,25 @@ type TextAlignOptions = {
   defaultAlignment: string,
 }
 
-export const TextAlign = Extension.create({
+declare module '@tiptap/core' {
+  interface Commands {
+    textAlign: {
+      /**
+       * Set the text align attribute
+       */
+      setTextAlign: (alignment: string) => Command,
+      /**
+       * Unset the text align attribute
+       */
+      unsetTextAlign: () => Command,
+    }
+  }
+}
+
+export const TextAlign = Extension.create<TextAlignOptions>({
   name: 'textAlign',
 
-  defaultOptions: <TextAlignOptions>{
+  defaultOptions: {
     types: ['heading', 'paragraph'],
     alignments: ['left', 'center', 'right', 'justify'],
     defaultAlignment: 'left',
@@ -36,37 +51,21 @@ export const TextAlign = Extension.create({
 
   addCommands() {
     return {
-      /**
-       * Set the text align attribute
-       */
-      setTextAlign: (alignment: string): Command => ({ commands }) => {
+      setTextAlign: (alignment: string) => ({ commands }) => {
         if (!this.options.alignments.includes(alignment)) {
           return false
         }
 
-        return this.options.types.every(type => commands.updateNodeAttributes(type, { textAlign: alignment }))
+        return this.options.types.every(type => commands.updateAttributes(type, { textAlign: alignment }))
       },
-      /**
-       * Unset the text align attribute
-       */
-      unsetTextAlign: (): Command => ({ commands }) => {
-        return this.options.types.every(type => commands.resetNodeAttributes(type, 'textAlign'))
+      unsetTextAlign: () => ({ commands }) => {
+        return this.options.types.every(type => commands.resetAttributes(type, 'textAlign'))
       },
     }
   },
 
   addKeyboardShortcuts() {
     return {
-      // TODO: re-use only 'textAlign' attribute
-      // TODO: use custom splitBlock only for `this.options.types`
-      Enter: () => this.editor.commands.first(({ commands }) => [
-        () => commands.newlineInCode(),
-        () => commands.createParagraphNear(),
-        () => commands.liftEmptyBlock(),
-        () => commands.splitBlock({
-          withAttributes: true,
-        }),
-      ]),
       'Mod-Shift-l': () => this.editor.commands.setTextAlign('left'),
       'Mod-Shift-e': () => this.editor.commands.setTextAlign('center'),
       'Mod-Shift-r': () => this.editor.commands.setTextAlign('right'),
@@ -74,9 +73,3 @@ export const TextAlign = Extension.create({
     }
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    TextAlign: typeof TextAlign,
-  }
-}

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { Editor, EditorContent } from '@tiptap/vue-starter-kit'
+import { Editor, EditorContent } from '@tiptap/vue-2'
 import Document from '@tiptap/extension-document'
 import Paragraph from '@tiptap/extension-paragraph'
 import Text from '@tiptap/extension-text'
@@ -62,5 +62,27 @@ export default {
 .has-focus {
   border-radius: 3px;
   box-shadow: 0 0 0 3px #68CEF8;
+}
+
+/* Basic editor styles */
+.ProseMirror {
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0D0D0D, 0.1);
+  }
+
+  code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
 }
 </style>

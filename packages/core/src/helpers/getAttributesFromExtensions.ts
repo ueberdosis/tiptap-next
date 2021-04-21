@@ -1,17 +1,20 @@
 import splitExtensions from './splitExtensions'
+import getExtensionField from './getExtensionField'
 import {
   Extensions,
   GlobalAttributes,
   Attributes,
   Attribute,
   ExtensionAttribute,
+  AnyConfig,
 } from '../types'
+import { NodeConfig, MarkConfig } from '..'
 
 /**
  * Get a list of all extension attributes defined in `addAttribute` and `addGlobalAttribute`.
  * @param extensions List of extensions
  */
-export default function getAttributesFromExtensions(extensions: Extensions) {
+export default function getAttributesFromExtensions(extensions: Extensions): ExtensionAttribute[] {
   const extensionAttributes: ExtensionAttribute[] = []
   const { nodeExtensions, markExtensions } = splitExtensions(extensions)
   const nodeAndMarkExtensions = [...nodeExtensions, ...markExtensions]
@@ -20,14 +23,27 @@ export default function getAttributesFromExtensions(extensions: Extensions) {
     rendered: true,
     renderHTML: null,
     parseHTML: null,
+    keepOnSplit: true,
   }
 
   extensions.forEach(extension => {
     const context = {
+      name: extension.name,
       options: extension.options,
     }
 
-    const globalAttributes = extension.config.addGlobalAttributes.bind(context)() as GlobalAttributes
+    const addGlobalAttributes = getExtensionField<AnyConfig['addGlobalAttributes']>(
+      extension,
+      'addGlobalAttributes',
+      context,
+    )
+
+    if (!addGlobalAttributes) {
+      return
+    }
+
+    // TODO: remove `as GlobalAttributes`
+    const globalAttributes = addGlobalAttributes() as GlobalAttributes
 
     globalAttributes.forEach(globalAttribute => {
       globalAttribute.types.forEach(type => {
@@ -49,16 +65,28 @@ export default function getAttributesFromExtensions(extensions: Extensions) {
 
   nodeAndMarkExtensions.forEach(extension => {
     const context = {
+      name: extension.name,
       options: extension.options,
     }
 
-    const attributes = extension.config.addAttributes.bind(context)() as Attributes
+    const addAttributes = getExtensionField<NodeConfig['addAttributes'] | MarkConfig['addAttributes']>(
+      extension,
+      'addAttributes',
+      context,
+    )
+
+    if (!addAttributes) {
+      return
+    }
+
+    // TODO: remove `as Attributes`
+    const attributes = addAttributes() as Attributes
 
     Object
       .entries(attributes)
       .forEach(([name, attribute]) => {
         extensionAttributes.push({
-          type: extension.config.name,
+          type: extension.name,
           name,
           attribute: {
             ...defaultAttribute,

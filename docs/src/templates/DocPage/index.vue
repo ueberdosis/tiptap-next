@@ -1,8 +1,11 @@
 <template>
   <Layout>
-    <div class="doc-page">
-      <VueRemarkContent class="doc-page__markdown" />
-    </div>
+    <app-section>
+      <VueRemarkContent class="text" />
+    </app-section>
+    <app-section>
+      <page-navigation />
+    </app-section>
   </Layout>
 </template>
 
@@ -19,7 +22,15 @@ query($path: String!) {
 </page-query>
 
 <script>
+import AppSection from '@/components/AppSection'
+import PageNavigation from '@/components/PageNavigation'
+
 export default {
+  components: {
+    AppSection,
+    PageNavigation,
+  },
+
   metaInfo() {
     return {
       title: this.$page?.docPage?.title,
@@ -31,7 +42,7 @@ export default {
         },
         {
           property: 'og:image',
-          content: 'https://next.tiptap.dev/og-image.png',
+          content: this.getOpenGraphImage(),
         },
         /* Twitter */
         {
@@ -44,7 +55,7 @@ export default {
         },
         {
           name: 'twitter:image',
-          content: 'https://next.tiptap.dev/og-image.png',
+          content: this.getOpenGraphImage(),
         },
         {
           name: 'twitter:site',
@@ -53,7 +64,14 @@ export default {
       ],
     }
   },
+  methods: {
+    getOpenGraphImage() {
+      const path = this.$route.path.replace(/\/$/, '')
+
+      return path === ''
+        ? 'https://next.tiptap.dev/og-image.png'
+        : `/images${path}/og-image.png`
+    },
+  },
 }
 </script>
-
-<style lang="scss" src="./style.scss" scoped></style>

@@ -1,15 +1,13 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 
 export interface ListItemOptions {
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
-export const ListItem = Node.create({
+export const ListItem = Node.create<ListItemOptions>({
   name: 'listItem',
 
-  defaultOptions: <ListItemOptions>{
+  defaultOptions: {
     HTMLAttributes: {},
   },
 
@@ -37,9 +35,3 @@ export const ListItem = Node.create({
     }
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    ListItem: typeof ListItem,
-  }
-}

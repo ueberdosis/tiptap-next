@@ -1,4 +1,4 @@
-# Custom styling
+# Styling
 
 ## toc
 
@@ -26,7 +26,7 @@ p {
 
 
 ## Option 2: Add custom classes
-Most extensions have a `class` option, which you can use to add a custom CSS class to the HTML tag.
+You can control the whole rendering, including adding classes to everything.
 
 ### Extensions
 Most extensions allow you to add attributes to the rendered HTML through the `HTMLAttributes` option. You can use that to add a custom class (or any other attribute). That’s also very helpful, when you work with [Tailwind CSS](https://tailwindcss.com/).
@@ -46,7 +46,7 @@ new Editor({
       },
     }),
     Text,
-  ]
+  ],
 })
 ```
 
@@ -67,13 +67,13 @@ new Editor({
   editorProps: {
     attributes: {
       class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none',
-    }
+    },
   },
 })
 ```
 
 ### With Tailwind CSS
-The editor works fine with Tailwind CSS, too. Find an example that’s styled with the `@tailwindcss/typography` plugin.
+The editor works fine with Tailwind CSS, too. Find an example that’s styled with the `@tailwindcss/typography` plugin below.
 
 <iframe
   src="https://codesandbox.io/embed/tiptap-demo-tailwind-iqjz0?fontsize=14&hidenavigation=1&module=%2Fsrc%2Findex.js&theme=dark&view=preview"
@@ -84,7 +84,7 @@ The editor works fine with Tailwind CSS, too. Find an example that’s styled wi
 ></iframe>
 
 ## Option 3: Customize the HTML
-You can even customize the markup for every extension. This will make a custom bold extension that doesn’t render a `<strong>` tag, but a `<b>` tag:
+Or you can customize the markup for extensions. The following example will make a custom bold extension that doesn’t render a `<strong>` tag, but a `<b>` tag:
 
 ```js
 import Bold from '@tiptap/extension-bold'
@@ -99,10 +99,11 @@ const CustomBold = Bold.extend({
 
 new Editor({
   extensions: [
-      // …
-      CustomBold(),
-  ]
+    // …
+    CustomBold(),
+  ],
 })
 ```
 
-You should put your custom extensions in separate files though, but I think you got the idea.
+You should put your custom extensions in separate files, but I think you got the idea.
+

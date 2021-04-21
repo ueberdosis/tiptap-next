@@ -3,23 +3,21 @@ import { wrappingInputRule } from 'prosemirror-inputrules'
 
 export interface TaskItemOptions {
   nested: boolean,
-  HTMLAttributes: {
-    [key: string]: any
-  },
+  HTMLAttributes: Record<string, any>,
 }
 
 export const inputRegex = /^\s*(\[([ |x])\])\s$/
 
-export const TaskItem = Node.create({
+export const TaskItem = Node.create<TaskItemOptions>({
   name: 'taskItem',
 
-  defaultOptions: <TaskItemOptions>{
+  defaultOptions: {
     nested: false,
     HTMLAttributes: {},
   },
 
   content() {
-    return this.options.nested ? '(paragraph|taskList)+' : 'paragraph+'
+    return this.options.nested ? 'paragraph block*' : 'paragraph+'
   },
 
   defining: true,
@@ -34,6 +32,7 @@ export const TaskItem = Node.create({
         renderHTML: attributes => ({
           'data-checked': attributes.checked,
         }),
+        keepOnSplit: false,
       },
     }
   },
@@ -80,11 +79,13 @@ export const TaskItem = Node.create({
     }) => {
       const { view } = editor
       const listItem = document.createElement('li')
+      const checkboxWrapper = document.createElement('label')
+      const checkboxStyler = document.createElement('span')
       const checkbox = document.createElement('input')
       const content = document.createElement('div')
 
+      checkboxWrapper.contentEditable = 'false'
       checkbox.type = 'checkbox'
-      checkbox.contentEditable = 'false'
       checkbox.addEventListener('change', event => {
         const { checked } = event.target as any
 
@@ -100,11 +101,14 @@ export const TaskItem = Node.create({
         checkbox.setAttribute('checked', 'checked')
       }
 
-      listItem.append(checkbox, content)
+      checkboxWrapper.append(checkbox, checkboxStyler)
+      listItem.append(checkboxWrapper, content)
 
-      Object.entries(HTMLAttributes).forEach(([key, value]) => {
-        listItem.setAttribute(key, value)
-      })
+      Object
+        .entries(HTMLAttributes)
+        .forEach(([key, value]) => {
+          listItem.setAttribute(key, value)
+        })
 
       return {
         dom: listItem,
@@ -138,9 +142,3 @@ export const TaskItem = Node.create({
     ]
   },
 })
-
-declare module '@tiptap/core' {
-  interface AllExtensions {
-    TaskItem: typeof TaskItem,
-  }
-}

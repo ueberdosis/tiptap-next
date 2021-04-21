@@ -4,44 +4,22 @@ import {
   SingleCommands,
   ChainedCommands,
   CanCommands,
-  CommandSpec,
+  RawCommands,
+  CommandProps,
 } from './types'
-import getAllMethodNames from './utilities/getAllMethodNames'
 
 export default class CommandManager {
 
   editor: Editor
 
-  commands: { [key: string]: any } = {}
+  commands: RawCommands
 
-  methodNames: string[] = []
-
-  constructor(editor: Editor) {
+  constructor(editor: Editor, commands: RawCommands) {
     this.editor = editor
-    this.methodNames = getAllMethodNames(this.editor)
+    this.commands = commands
   }
 
-  /**
-   * Register a command.
-   *
-   * @param name The name of your command
-   * @param callback The method of your command
-   */
-  public registerCommand(name: string, callback: CommandSpec): Editor {
-    if (this.commands[name]) {
-      throw new Error(`tiptap: command '${name}' is already defined.`)
-    }
-
-    if (this.methodNames.includes(name)) {
-      throw new Error(`tiptap: '${name}' is a protected name.`)
-    }
-
-    this.commands[name] = callback
-
-    return this.editor
-  }
-
-  public createCommands() {
+  public createCommands(): SingleCommands {
     const { commands, editor } = this
     const { state, view } = editor
     const { tr } = state
@@ -64,45 +42,44 @@ export default class CommandManager {
       })) as SingleCommands
   }
 
-  public createChain(startTr?: Transaction, shouldDispatch = true) {
+  public createChain(startTr?: Transaction, shouldDispatch = true): ChainedCommands {
     const { commands, editor } = this
     const { state, view } = editor
     const callbacks: boolean[] = []
     const hasStartTransaction = !!startTr
     const tr = startTr || state.tr
 
-    return new Proxy({}, {
-      get: (_, name: string, proxy) => {
-        if (name === 'run') {
-          if (!hasStartTransaction && shouldDispatch && !tr.getMeta('preventDispatch')) {
-            view.dispatch(tr)
-          }
+    const run = () => {
+      if (!hasStartTransaction && shouldDispatch && !tr.getMeta('preventDispatch')) {
+        view.dispatch(tr)
+      }
 
-          return () => callbacks.every(callback => callback === true)
-        }
+      return () => callbacks.every(callback => callback === true)
+    }
 
-        const command = commands[name]
-
-        if (!command) {
-          throw new Error(`tiptap: command '${name}' not found.`)
-        }
-
-        return (...args: any) => {
+    const chain = {
+      ...Object.fromEntries(Object.entries(commands).map(([name, command]) => {
+        const chainedCommand = (...args: any[]) => {
           const props = this.buildProps(tr, shouldDispatch)
           const callback = command(...args)(props)
 
           callbacks.push(callback)
 
-          return proxy
+          return chain
         }
-      },
-    }) as ChainedCommands
+
+        return [name, chainedCommand]
+      })),
+      run,
+    } as unknown as ChainedCommands
+
+    return chain
   }
 
-  public createCan(startTr?: Transaction) {
+  public createCan(startTr?: Transaction): CanCommands {
     const { commands, editor } = this
     const { state } = editor
-    const dispatch = false
+    const dispatch = undefined
     const tr = startTr || state.tr
     const props = this.buildProps(tr, dispatch)
     const formattedCommands = Object.fromEntries(Object
@@ -117,7 +94,7 @@ export default class CommandManager {
     } as CanCommands
   }
 
-  public buildProps(tr: Transaction, shouldDispatch = true) {
+  public buildProps(tr: Transaction, shouldDispatch = true): CommandProps {
     const { editor, commands } = this
     const { state, view } = editor
 
@@ -125,7 +102,7 @@ export default class CommandManager {
       tr.setStoredMarks(state.storedMarks)
     }
 
-    const props = {
+    const props: CommandProps = {
       tr,
       editor,
       view,
@@ -140,7 +117,7 @@ export default class CommandManager {
           .entries(commands)
           .map(([name, command]) => {
             return [name, (...args: any[]) => command(...args)(props)]
-          }))
+          })) as SingleCommands
       },
     }
 

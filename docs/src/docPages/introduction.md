@@ -13,16 +13,18 @@ tiptap is a headless wrapper around [ProseMirror](https://ProseMirror.net) – a
 Create exactly the rich text editor you want out of customizable building blocks. tiptap comes with sensible defaults, a lot of extensions and a friendly API to customize every aspect. It’s backed by a welcoming community, open source, and free.
 
 ## Example
-<demo name="Examples/CollaborativeEditing" :show-source="false" inline />
+<demo name="Examples/CollaborativeEditing" hide-source inline />
 
 ## Features
 **Headless.** We don’t tell you what a menu should look like or where it should be rendered in the DOM. That’s why tiptap is headless and comes without any CSS. You are in full control over markup, styling and behaviour.
 
-**Framework-agnostic.** No matter what framework you use, you’ll enjoy tiptap. Out of the box, it works with plain JavaScript and Vue.js, but it’s also possible to use it in React, Svelte and others.
+**Framework-agnostic.** No matter what framework you use, you’ll enjoy tiptap. Out of the box, it works with Vanilla JavaScript and Vue.js, but it’s also possible to use it in [React](/installation/react), Svelte and others.
 
-**TypeScript.** tiptap 2 is written in TypeScript. That helps us to find bugs early and gives you a nice autocomplete for the API (if your IDE supports that) on top of the extensive human written documentation.
+**TypeScript.** tiptap is written in TypeScript. That helps us to find bugs early and gives you a nice autocomplete for the API (if your IDE supports that) on top of the extensive human written documentation.
 
 **Collaborative.** Real-time collaboration, syncing between different devices and working offline used to be hard. We provide everything you need to keep everything in sync, conflict-free with the power of [Y.js](https://github.com/yjs/yjs). Our production-grade setup requires less than 20 lines of code.
+
+**Community.** Over the years, a lovely community has grown around tiptap. There’s so much content shared, so many people helping out in issues and a ton of community extensions, you’ll be surprised how much that can help.
 
 ## Who uses tiptap?
 - [GitLab](https://gitlab.com)
@@ -32,6 +34,7 @@ Create exactly the rich text editor you want out of customizable building blocks
 - [Directus CMS](https://directus.io)
 - [Nextcloud](https://apps.nextcloud.com/apps/text)
 - [DocIQ](https://www.dociq.io)
+- [ycode](https://www.ycode.com/)
 - [Scrumpy](https://www.scrumpy.io)
 - … and [many more](https://github.com/ueberdosis/tiptap/network/dependents?package_id=UGFja2FnZS0xMzE5OTg0ODc%3D)
 
