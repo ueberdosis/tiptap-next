@@ -1,3 +1,0 @@
-# lift
-
-TODO

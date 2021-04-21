@@ -1,3 +1,0 @@
-# liftEmptyBlock
-
-TODO

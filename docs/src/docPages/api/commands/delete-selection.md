@@ -1,3 +1,0 @@
-# deleteSelection
-
-TODO

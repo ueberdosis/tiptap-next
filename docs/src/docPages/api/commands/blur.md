@@ -1,3 +1,0 @@
-# blur
-
-TODO
